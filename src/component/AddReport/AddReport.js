@@ -3,9 +3,9 @@ import Form from 'react-bootstrap/Form';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useState } from 'react';
-import Success from './success';
+import Success from '../success';
 
-function BasicExample() {
+function AddReport() {
 
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
@@ -85,4 +85,4 @@ function BasicExample() {
   );
 }
 
-export default BasicExample;
+export default AddReport;
