@@ -15,9 +15,9 @@ const Table = () => {
       try {
         const result = await axios.post(
           "http://pacs.iotcom.io:5500/api/data",
-           data, 
-           {headers: {"Authorization" : `Bearer ${token}`}}
-           );
+          data,
+          { headers: { "Authorization": `Bearer ${token}` } }
+        );
         const rcvData = result.data
         console.log(rcvData);
       } catch (err) {
@@ -35,27 +35,27 @@ const Table = () => {
 
     //console.log(data)
 
-    const editData = data.map((item) =>{
+    const editData = data.map((item) => {
       //item.id === id && name ? { ...item, [name]: value } : item
-      if (item.id === id && name){
-        return item = {...item,[name]: value}  
+      if (item.id === id && name) {
+        return item = { ...item, [name]: value }
       } else return item
     })
 
     //console.log(editData)
-     setData(editData)
+    setData(editData)
   }
-  useEffect(() => {    
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get("http://pacs.iotcom.io:5500/api/data", { headers: {"Authorization" : `Bearer ${token}`} });
+        const result = await axios.get("http://pacs.iotcom.io:5500/api/data", { headers: { "Authorization": `Bearer ${token}` } });
         setData(result.data);
       } catch (err) {
         console.error(err);
       }
     };
     fetchData();
-  },[token]);
+  }, [token]);
 
   return (
     <div className="container p-4">
@@ -71,16 +71,16 @@ const Table = () => {
         </thead>
         <tbody>
           {data.map((item) =>
-            item.isadmin  ? (
+            item.isadmin ? (
               <tr key={item.id}>
                 <td>{item.name}</td>
                 <td>{item.study}</td>
                 <td>
-                <input  name="history"  value = {item.history}  type="text"  onChange={(e)=>onChangeInput(e,item.id)} className="form-control" />                  
-                 </td>
+                  <input name="history" value={item.history} type="text" onChange={(e) => onChangeInput(e, item.id)} className="form-control" />
+                </td>
                 <td>{item.Date}</td>
                 <td>
-                  <FileUploader name={item.id}/>
+                  <FileUploader name={item.id} />
                 </td>
               </tr>
             ) : (
@@ -88,9 +88,9 @@ const Table = () => {
                 <td>{item.name}</td>
                 <td>{item.study}</td>
                 <td>
-                  <input  name="history"  value= {item.history}  type="text"  onChange={(e)=>onChangeInput(e,item.id)} className="form-control"/>
+                  <input name="history" value={item.history} type="text" onChange={(e) => onChangeInput(e, item.id)} className="form-control" />
                   <Button id={item.id} variant="secondary" size="sm" onClick={handelSave}> save </Button>
-                  </td>
+                </td>
                 <td>{item.Date}</td>
                 <td>
                   <Download name={item.id} />
