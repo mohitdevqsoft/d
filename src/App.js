@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import { GlobalContextProvide } from './ContextHooks/GlobalContextProvide';
 
 import Routes from './Routes/Routes';
 
@@ -14,7 +15,11 @@ import Routes from './Routes/Routes';
 const App = () => {
 
   return (
-    <Routes />
+    <GlobalContextProvide>
+
+      <Routes />
+
+    </GlobalContextProvide>
   )
 }
 

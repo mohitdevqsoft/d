@@ -13,11 +13,20 @@ import Success from '../component/success';
 
 import ViewReport from "../component/ViewReport/ViewReport"
 import Login from '../component/login';
+import ContextHelper from '../ContextHooks/ContextHelper';
 
 //---------- main route
 
 const Router = () => {
+    const {
+        currentUser,
 
+        setCurrentUser
+    } = ContextHelper()
+
+
+
+console.log("currentUser",currentUser);
 
     //---------- View
 
