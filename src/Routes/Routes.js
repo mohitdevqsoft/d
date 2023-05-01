@@ -26,7 +26,7 @@ const Router = () => {
 
 
 
-    console.log("currentUser", currentUser);
+    // console.log("currentUser", currentUser);
 
     //---------- View
 

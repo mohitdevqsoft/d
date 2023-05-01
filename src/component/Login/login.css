@@ -44,3 +44,6 @@ body, html, .App, #root {
 .forgot-password a {
   color: #1684f1;
 }
+.errorMassage{
+  color: red;
+}

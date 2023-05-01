@@ -14,8 +14,59 @@ const GlobalContextProvide = (props) => {
 
     //---------- state, veriables and hooks
 
-    const [currentUser, setCurrentUser] = useState({islogin:false})
+    const [currentUser, setCurrentUser] = useState({})
 
+//---------- life cycles
+  // check previous user is login
+  const setup = async () => {
+
+    const current_user = await getDataFromLocalStorage('current_user');
+    // await removeDataFromAsyncStorage('current_user')
+
+
+    if (current_user) {
+
+        setCurrentUser(current_user)
+    } 
+}
+useEffect(()=>{
+
+    setup()
+},[])
+
+  //------------------------------ localStorage  Storage ------------------------------------------//
+
+    //---------- Local storage
+
+    // store
+    const storeDataInLocalStorage = async ({ key, value }) => {
+
+        try {
+            const jsonValue = JSON.stringify(value)
+            await  localStorage.setItem(key, jsonValue)
+            return true
+        } catch (e) {
+            // saving error
+            return false
+        }
+    }
+
+   // get data
+   const getDataFromLocalStorage = async (key) => {
+    try {
+        const value = await localStorage.getItem(key)
+        if (value !== null) {
+
+            return JSON.parse(value)
+        }
+
+        return false
+    } catch (e) {
+
+        // error reading value
+        return false
+    }
+}
 
     //---------- return main view
 
@@ -25,6 +76,8 @@ const GlobalContextProvide = (props) => {
                 currentUser,
                 
                 setCurrentUser,
+                storeDataInLocalStorage,
+                getDataFromLocalStorage
             }}
         >
 
