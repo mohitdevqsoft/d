@@ -14,6 +14,7 @@ import Success from '../component/success';
 import ViewReport from "../component/ViewReport/ViewReport"
 import Login from '../component/Login/login';
 import ContextHelper from '../ContextHooks/ContextHelper';
+import CustomTable from '../component/Common/CustomTable';
 
 //---------- main route
 
@@ -26,7 +27,7 @@ const Router = () => {
 
 
 
-    console.log("currentUser", currentUser);
+    // console.log("currentUser", currentUser);
 
     //---------- View
 

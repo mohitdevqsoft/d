@@ -14,6 +14,8 @@ const ContextHelper = () => {
         currentUser,
                 
         setCurrentUser,
+        storeDataInLocalStorage,
+        getDataFromLocalStorage
     } = useContext(AppContext);
 
     //---------- main app / component
@@ -22,6 +24,8 @@ const ContextHelper = () => {
         currentUser,
                 
         setCurrentUser,
+        storeDataInLocalStorage,
+        getDataFromLocalStorage
     }
 
 }

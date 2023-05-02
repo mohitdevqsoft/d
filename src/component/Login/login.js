@@ -2,6 +2,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../Login/login.css'
+import { postDatatoServer } from '../../Utils/Axios';
+import ContextHelper from '../../ContextHooks/ContextHelper';
 // Define a secret key for signing JWT tokens
 //const secretKey = 'mysecretkey';
 
@@ -13,73 +15,80 @@ const user = {
 };
 
 function Login() {
+  //---------- state, veriable, context and hooks
+  const {
+    currentUser,
+
+    setCurrentUser,
+    storeDataInLocalStorage
+  } = ContextHelper()
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState({})
+
+console.log("-----",currentUser);
+  //---------- life cycles
+
+
+  //--------- user Login
 
   const handleLogin = (event) => {
-    console.log(event)
     event.preventDefault();
-
-    axios
-      .post('http://localhost:5500/login', {
-        username: event.target.username.value,
-        password: event.target.password.value
-      })
-      .then((res) => {
-        //navigate('/success');
-        console.log(res.data);
-        localStorage.setItem('token', res.data.token);
-        setLoggedIn(true)
-
-
-      })
-      .catch((e) => {
-        console.error(e);
-        navigate('/goodbye');
-      })
-
-    // // Check if the username and password are correct
-    // if (user.username === event.target.username.value &&
-    //     user.password === event.target.password.value) {
-
-    //   // Create a JWT token with the user ID and sign it with the secret key
-    //   //const token = jwt.sign({ userId: user.id }, secretKey);
-
-    //   // Store the token in the browser's localStorage
-    //   //localStorage.setItem('token', token);
-
-    //   // Set the logged in state to true
-    //   setLoggedIn(true);
-    // } else {
-    //   // Display an error message if the username or password is incorrect
-    //   setErrorMessage('Invalid username or password');
-    // }
+    let data = {
+      username: event.target.username.value,
+      password: event.target.password.value
+    }
+    if (!data?.username) {
+      setErrorMessage({
+        username: "Please provide a valid username."
+      });
+      return;
+    }
+    if (!data?.password) {
+      setErrorMessage({
+        password: "Please provide a valid password.",
+      });
+      return;
+    } else {
+      setErrorMessage()
+    }
+    postDatatoServer({ end_point: "login", body: data, call_back: handleResponse })
   };
+
+  // success
+
+  const handleResponse = (res) => {
+    if (res?.response && res?.status === "success") {
+      console.log("++++++>>>> res", res);
+
+      storeDataInLocalStorage({key: 'current_user',value:res?.response})
+
+      setCurrentUser(res?.response)
+
+      navigate('/view-report');
+
+    } else {
+      if (res?.error?.response?.data?.authrised === 'false') {
+
+        setErrorMessage({
+          error: "Please Enter Valid Details",
+        });
+      } else {
+
+        setErrorMessage({
+          error: res?.error?.message,
+        });
+      }
+    }
+  }
+
+
 
   const handleLogout = () => {
-    // Remove the token from the browser's localStorage
     localStorage.removeItem('token');
 
-    // Set the logged in state to false
     setLoggedIn(false);
   };
-
-  // Check if the user is logged in by looking for the JWT token in localStorage
-  //const token = localStorage.getItem('token');
-  //   if (token) {
-  //     try {
-  //       // Verify the token's signature and decode the payload
-  //       //const decoded = jwt.verify(token, secretKey);
-
-  //       // Set the logged in state to true
-  //       setLoggedIn(true);
-  //     } catch (err) {
-  //       // Remove the invalid token from localStorage and display an error message
-  //       localStorage.removeItem('token');
-  //       setErrorMessage('Failed to verify authentication token');
-  //     }
-  //   }
 
   return (
     <div>
@@ -92,15 +101,18 @@ function Login() {
         :
         <div className="auth-inner">
           <form onSubmit={handleLogin}>
+            {errorMessage?.error && <div className='errorMassage'>{errorMessage?.error}</div>}
+
             <h3>Sign In</h3>
             <div className="mb-3">
               <label>Email</label>
               <input
-                type="email"
+                // type="email"
                 name='username'
                 className="form-control"
                 placeholder="Enter email"
               />
+              {errorMessage?.username && <div className='errorMassage'>{errorMessage?.username}</div>}
             </div>
             <div className="mb-3">
               <label>Password</label>
@@ -110,7 +122,10 @@ function Login() {
                 className="form-control"
                 placeholder="Enter password"
               />
+              {errorMessage?.password && <div className='errorMassage'>{errorMessage?.password}</div>}
+
             </div>
+{/* 
             <div className="mb-3">
               <div className="custom-control custom-checkbox">
                 <input
@@ -122,9 +137,8 @@ function Login() {
                   Remember me
                 </label>
               </div>
-            </div>
-            {errorMessage && <div>{errorMessage}</div>}
-            <div className="d-grid">
+            </div> */}
+            <div className="d-grid mt-4">
               <button type="submit" className="btn btn-primary">
                 Submit
               </button>

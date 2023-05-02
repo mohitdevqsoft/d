@@ -6,8 +6,8 @@ import Button from 'react-bootstrap/Button';
 
 const Table = () => {
   const [data, setData] = useState([]);
-  const token = localStorage.getItem('token');
-
+  const curent_user = localStorage.getItem('current_user');
+  let userToken = JSON.parse(curent_user)
   const handelSave = (e) => {
     console.log(e.target)
     console.log(data)
@@ -16,7 +16,7 @@ const Table = () => {
         const result = await axios.post(
           "http://pacs.iotcom.io:5500/api/data",
           data,
-          { headers: { "Authorization": `Bearer ${token}` } }
+          { headers: { "Authorization": `Bearer ${userToken?.token}` } }
         );
         const rcvData = result.data
         console.log(rcvData);
@@ -48,14 +48,14 @@ const Table = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get("http://pacs.iotcom.io:5500/api/data", { headers: { "Authorization": `Bearer ${token}` } });
+        const result = await axios.get("http://pacs.iotcom.io:5500/api/data", { headers: { "Authorization": `Bearer ${userToken?.token}` } });
         setData(result.data);
       } catch (err) {
         console.error(err);
       }
     };
     fetchData();
-  }, [token]);
+  }, [userToken]);
 
   return (
     <div className="container p-4">

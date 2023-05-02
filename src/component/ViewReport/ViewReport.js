@@ -1,88 +1,68 @@
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useState } from 'react';
-import Success from '../success';
+import ContextHelper from '../../ContextHooks/ContextHelper';
+import { getDataFromServer } from '../../Utils/Axios';
+import CustomTable from '../Common/CustomTable';
 
 function ViewReport() {
-
+  //---------- state, veriable, context and hooks
   const navigate = useNavigate();
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState({})
-  const [errorMessage, setErrorMessage] = useState('');
+  const {
+    currentUser,
 
-  // const handelclick = (e) => {
-  //     console.log(e.target.value) 
-  // };
+  } = ContextHelper()
+  const [dataTable, setDataTable] = React.useState([])
 
-  const handelSubmit = (e) => {
-    e.preventDefault()
-    console.log(e.target.elements.name.value)
-    console.log(e.target.elements.password.value)
+  React.useEffect(() => {
 
-    axios
-      .post('http://pacs.iotcom.io:5500/login', {
-        username: e.target.elements.name.value,
-        password: e.target.elements.password.value
-      })
-      .then((res) => {
-        setLoggedIn(true);
-        localStorage.setItem('token', res.data.token);
-        setUser(res.data.name);
-        //navigate('/success');
-        console.log(res.data);
-      })
-      .catch((e) => {
-        console.error(e);
-        //navigate('/goodbye'); 
-        setErrorMessage('Invalid username or password');
-        setTimeout(() => {
-          setErrorMessage('');
-        }, 2000); // hide the error message after 5 seconds                 
-      })
+    getDataFromServer({ end_point: "api/data", call_back: handleResponse, params: currentUser })
 
+  }, [currentUser.token]);
+
+
+  const handleResponse = (res) => {
+
+    if (res?.status === "success" && res?.response) {
+      setDataTable(res?.response)
+
+    } else {
+      // alert(res?.error)
+    }
   }
 
-  const handleLogout = () => {
-    // Remove the token from the browser's localStorage
-    localStorage.removeItem('token');
-
-    // Set the logged in state to false
-    setLoggedIn(false);
-  };
 
   return (
-    <div> {
-      loggedIn ?
-        <div>
-          <p>Welcome, {user}!</p>
-          <Button onClick={handleLogout}>Logout</Button>
-          <Success />
-        </div>
-        :
-        <div>
-          <Form onSubmit={handelSubmit}>
-            <Form.Group className="mb-2 col-4" controlId="formBasicEmail">
-              <Form.Control type="text" name="name" placeholder="Enter Name " />
-              <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
-              </Form.Text>
-            </Form.Group>
 
-            <Form.Group className="mb-2 col-4" controlId="formBasicPassword">
-              <Form.Control type="password" name="password" placeholder="Password" />
-              <Form.Text className="text-muted">
-                We'll never share your password with anyone else.
-              </Form.Text>
-            </Form.Group>
-            <Button variant="primary col-4" type="submit"> Submit </Button>
-            {errorMessage && <div className=" mb-2 col-4 alert alert-warning" role="alert">{errorMessage}</div>}
-          </Form>
-        </div>}
-    </div>
+    <>
+      <CustomTable
+        dataTable={dataTable}
+        columns={columns}
+      />
 
-  );
+    </>
+  )
+
+
 }
 
 export default ViewReport;
+const columns = [
+  {
+    id: 'name', label: 'Name',
+  },
+  {
+    id: 'study', label: 'Study',
+  },
+  {
+    id: 'history', label: 'History',
+  },
+  {
+    id: 'date', label: 'Date',
+  },
+  {
+    id: 'report', label: 'Report',
+  },
+  {
+    id: 'urjent', label: 'Urjent',
+  },
+];
