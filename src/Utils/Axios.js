@@ -2,15 +2,16 @@ import axios from 'axios';
 
 const BASE_URL = 'http://pacs.iotcom.io:5500/'
 
-export const getDataFromServer = ({ end_point, params, call_back, props }) => {
-
+export const getDataFromServer = async ({ end_point, params, call_back, props }) => {
+    console.log("========params===",params?.token);
     let url = BASE_URL + end_point
-    axios.get(url, {
-        ...params
+   await axios.get(url, {
+        // ...params
+         headers: {"Authorization" : `Bearer ${params?.token}`}
     }).then(response => {
 
         let object = {
-            response: response,
+            response: response?.data,
             status: 'success',
             error: undefined,
             props
@@ -26,6 +27,7 @@ export const getDataFromServer = ({ end_point, params, call_back, props }) => {
         }
         call_back(object)
     })
+    return;
 }
 
 export const postDatatoServer = ({ end_point, body, call_back, props }) => {

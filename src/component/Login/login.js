@@ -125,7 +125,7 @@ console.log("-----",currentUser);
               {errorMessage?.password && <div className='errorMassage'>{errorMessage?.password}</div>}
 
             </div>
-
+{/* 
             <div className="mb-3">
               <div className="custom-control custom-checkbox">
                 <input
@@ -137,8 +137,8 @@ console.log("-----",currentUser);
                   Remember me
                 </label>
               </div>
-            </div>
-            <div className="d-grid">
+            </div> */}
+            <div className="d-grid mt-4">
               <button type="submit" className="btn btn-primary">
                 Submit
               </button>

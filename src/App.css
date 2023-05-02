@@ -27,7 +27,9 @@
 .App-link {
   color: #61dafb;
 }
-
+.color_header{
+  background-image: linear-gradient(to top, #93e9be, #83dfa9, #76d594, #6bca7d, #62bf65);
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -35,4 +37,9 @@
   to {
     transform: rotate(360deg);
   }
+}
+.hover_table:hover {
+  /* background-color: #7da5ab; */
+  background: rgb(200,244,244);
+  background: linear-gradient(0deg, rgba(200,244,244,1) 27%, rgba(243,247,247,1) 89%);
 }
