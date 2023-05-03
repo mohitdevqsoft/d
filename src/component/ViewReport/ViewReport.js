@@ -9,7 +9,7 @@ function ViewReport() {
   const navigate = useNavigate();
   const {
     currentUser,
-
+setCurrentUser
   } = ContextHelper()
   const [dataTable, setDataTable] = React.useState([])
 
@@ -30,15 +30,14 @@ function ViewReport() {
     }
   }
 
-
   return (
 
     <>
-      <CustomTable
+      {/* <CustomTable
         dataTable={dataTable}
         columns={columns}
-      />
-
+        isAdmin={true}
+      /> */}
     </>
   )
 
@@ -46,6 +45,7 @@ function ViewReport() {
 }
 
 export default ViewReport;
+
 const columns = [
   {
     id: 'name', label: 'Name',

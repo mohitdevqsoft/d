@@ -3,7 +3,7 @@ import React from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import ContextHelper from '../ContextHooks/ContextHelper';
 
-const RouteProtecter = ({ children }) => {
+const RouteProtecter = ({ children, currentRoute }) => {
 
     let isLogin = false;
 
@@ -14,16 +14,22 @@ const RouteProtecter = ({ children }) => {
         setCurrentUser
     } = ContextHelper()
 
-console.log("RouteProtecter",currentUser);
+    console.log("RouteProtecter", currentUser);
 
 
-    if (isLogin) {
+    if (!currentUser?.token) {
 
         return (
             <Navigate to="/" replace />
         )
     }
 
+    if (currentUser?.isadmin && currentRoute === '/view-report') {
+
+        return (
+            <Navigate to={'/add-report'} replace />
+        )
+    }
     return children;
 };
 

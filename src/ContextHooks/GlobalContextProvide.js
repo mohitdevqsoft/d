@@ -2,6 +2,7 @@
 
 // react
 import React, { useEffect, useState, createContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 //---------- context
@@ -13,28 +14,33 @@ const AppContext = createContext();
 const GlobalContextProvide = (props) => {
 
     //---------- state, veriables and hooks
-
     const [currentUser, setCurrentUser] = useState({})
+    const [loading, setLoading] = useState({})
 
-//---------- life cycles
-  // check previous user is login
-  const setup = async () => {
+    //---------- life cycles
+    // check previous user is login
+    const setup = async () => {
 
-    const current_user = await getDataFromLocalStorage('current_user');
-    // await removeDataFromAsyncStorage('current_user')
+        const current_user = await getDataFromLocalStorage('current_user');
+        // await removeDataFromAsyncStorage('current_user')
 
 
-    if (current_user) {
+        if (current_user) {
 
-        setCurrentUser(current_user)
-    } 
-}
-useEffect(()=>{
+            setCurrentUser(current_user)
+            
+            setLoading(false)
+        } else {
 
-    setup()
-},[])
+            setLoading(false)
+        }
+    }
+    useEffect(() => {
+        setLoading(true)
+        setup()
+    }, [])
 
-  //------------------------------ localStorage  Storage ------------------------------------------//
+    //------------------------------ localStorage  Storage ------------------------------------------//
 
     //---------- Local storage
 
@@ -43,7 +49,7 @@ useEffect(()=>{
 
         try {
             const jsonValue = JSON.stringify(value)
-            await  localStorage.setItem(key, jsonValue)
+            await localStorage.setItem(key, jsonValue)
             return true
         } catch (e) {
             // saving error
@@ -51,22 +57,22 @@ useEffect(()=>{
         }
     }
 
-   // get data
-   const getDataFromLocalStorage = async (key) => {
-    try {
-        const value = await localStorage.getItem(key)
-        if (value !== null) {
+    // get data
+    const getDataFromLocalStorage = async (key) => {
+        try {
+            const value = await localStorage.getItem(key)
+            if (value !== null) {
 
-            return JSON.parse(value)
+                return JSON.parse(value)
+            }
+
+            return false
+        } catch (e) {
+
+            // error reading value
+            return false
         }
-
-        return false
-    } catch (e) {
-
-        // error reading value
-        return false
     }
-}
 
     //---------- return main view
 
@@ -74,7 +80,7 @@ useEffect(()=>{
         <AppContext.Provider
             value={{
                 currentUser,
-                
+
                 setCurrentUser,
                 storeDataInLocalStorage,
                 getDataFromLocalStorage
@@ -82,7 +88,7 @@ useEffect(()=>{
         >
 
             {
-                props.children
+                !loading && props.children
             }
         </AppContext.Provider >
 

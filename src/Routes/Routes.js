@@ -15,6 +15,7 @@ import ViewReport from "../component/ViewReport/ViewReport"
 import Login from '../component/Login/login';
 import ContextHelper from '../ContextHooks/ContextHelper';
 import CustomTable from '../component/Common/CustomTable';
+import AddReport from '../component/AddReport/AddReport';
 
 //---------- main route
 
@@ -41,7 +42,7 @@ const Router = () => {
                 <Route
                     path="/view-report"
                     element={
-                        <RouteProtecter>
+                        <RouteProtecter currentRoute={'/view-report'}>
                             <ViewReport />
                         </RouteProtecter>
                     }
@@ -50,8 +51,8 @@ const Router = () => {
                 <Route
                     path="/add-report"
                     element={
-                        <RouteProtecter>
-                            <ViewReport />
+                        <RouteProtecter currentRoute={'/add-report'}>
+                            <AddReport />
                         </RouteProtecter>
                     }
                 />
