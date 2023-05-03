@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../Login/login.css'
@@ -29,6 +29,16 @@ function Login() {
   console.log("-----", currentUser);
   //---------- life cycles
 
+  React.useEffect(()=>{
+    if(currentUser?.token){
+    if (currentUser?.isadmin) {
+      navigate('/add-report') 
+  } else {
+      navigate('/view-report')
+  }
+}
+
+  },[])
 
   //--------- user Login
 

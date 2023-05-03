@@ -19,12 +19,11 @@ function FileUploader({name}) {
     const formData = new FormData();
 	//console.log(file);
 	//file.newname = filename
-	  console.log(file);
     formData.append('file',file, `${filename}.docx`);
     
     try {
         const response = await axios.post('http://pacs.iotcom.io:5500/upload', formData);
-        //console.log(response);
+        console.log('responce ',response);
       } catch (error) {
         console.log(error);
       }

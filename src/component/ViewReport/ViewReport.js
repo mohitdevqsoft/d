@@ -12,7 +12,7 @@ function ViewReport() {
   const navigate = useNavigate();
   const {
     currentUser,
-
+setCurrentUser
   } = ContextHelper()
   const [dataTable, setDataTable] = React.useState([])
 
@@ -43,7 +43,7 @@ function ViewReport() {
 
   return (
 
-    <div style={{ display: open && 'flex', width: '90%' }}>
+    <div style={{ display:'flex', width: '90%' ,justifyContent:"center" }}>
       <CustomHeader open={open} handleDrawerOpen={handleDrawerOpen} />
       <CustomDrawer open={open} handleDrawerClose={handleDrawerClose} />
       <CustomTable
@@ -57,23 +57,27 @@ function ViewReport() {
 }
 
 export default ViewReport;
+
 const columns = [
   {
-    id: 'name', label: 'Name',
+      id: 'name', label: 'Name',
   },
   {
-    id: 'study', label: 'Study',
+      id: 'study', label: 'Study',
   },
+  // {
+  //     id: 'history', label: 'History',
+  // },
   {
-    id: 'history', label: 'History',
+      id: 'date', label: 'Date',
   },
+  // {
+  //     id: 'report', label: 'Report',
+  // },
+  // {
+  //     id: 'urjent', label: 'Urjent',
+  // },
   {
-    id: 'date', label: 'Date',
-  },
-  {
-    id: 'report', label: 'Report',
-  },
-  {
-    id: 'urjent', label: 'Urjent',
+      id: 'addMore', label: 'Other Information',
   },
 ];

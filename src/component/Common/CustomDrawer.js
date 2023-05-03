@@ -6,8 +6,6 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -20,8 +18,6 @@ function CustomDrawer(props) {
 
     const { open, handleDrawerClose } = props;
     const [searchName, setSearchName] = useState(false);
-    const [study, setStudy] = useState(false);
-    const [date, setDate] = useState(false);
     const [urgent, setUrgent] = useState(false);
 
     const dateInputRef = useRef(null);
@@ -35,6 +31,12 @@ function CustomDrawer(props) {
         justifyContent: 'flex-end',
     }));
 
+
+    const handleDate=(event)=>{
+        
+        // dateInputRef.current.click()
+        // console.log(dateInputRef.current.);
+    }
     return (
         <Drawer
             sx={{
@@ -49,6 +51,8 @@ function CustomDrawer(props) {
             anchor="left"
             open={open}
         >
+            <div style={{padding:10,display:'flex',justifyContent:"center",flexDirection:"column"}}>
+
             <DrawerHeader>
                 <IconButton onClick={handleDrawerClose}>
                     {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -56,63 +60,58 @@ function CustomDrawer(props) {
             </DrawerHeader>
             <Divider />
             <DrawerHeader style={{ padding: '20px' }}>
-                <ListItemText primary={'Filter'} />
+                <ListItemText primary={'Filter'} 
+                onClick={()=>handleDate()}
+                />
             </DrawerHeader>
             <Divider />
             <List>
-                <ListItem disablePadding>
-                    {searchName ? <TextField
+                  <TextField
                         id="standard-basic"
-                        label="Type Name ..."
+                        label="Search Name"
                         variant="filled"
                         onChange={(e) => console.log('Name', e.target.value)}
-                        style={{ margin: 'auto' }}
+                        style={{width:"100%"}}
                     />
-                        : <ListItemButton onClick={() => setSearchName(true)}>
-                            <ListItemText primary={'Search by Name'} />
-                        </ListItemButton>}
-                </ListItem>
             </List>
             <Divider />
             <List>
-                <ListItem disablePadding>
-                    {study ? <TextField
+                    <TextField
                         type='calender'
                         id="standard-basic"
-                        label="Type Study ..."
+                        label="Search Study"
                         variant="filled"
                         onChange={(e) => console.log('study', e.target.value)}
-                        style={{ margin: 'auto' }}
+                        style={{width:"100%"}}
+
                     />
-                        : <ListItemButton onClick={() => setStudy(true)}>
-                            <ListItemText primary={'Study'} />
-                        </ListItemButton>}
-                </ListItem>
+                       
             </List>
             <Divider />
             <List>
-                <ListItem disablePadding>
-                    {date ?
-                        <div style={{ marginLeft: '10px' }}>
-                            <TextField
+                        {/* <div style={{ marginLeft: '10px' }}> */}
+                            <input
                                 type="date"
                                 onChange={(e) => console.log('StartDate', e.target.value)}
                                 ref={dateInputRef}
-                                id="standard-basic"
-                                variant="filled"
-                                size='small' />
-                            <TextField
+                                // id="standard-basic"
+                                // variant="filled"
+                                // size='small' 
+                                style={{width:"100%",display: 'none'}}
+                                />
+                            <input
                                 type="date"
                                 onChange={(e) => console.log('EndDate', e.target.value)}
-                                ref={dateInputRef}
-                                id="standard-basic"
-                                variant="filled"
-                                size='small' />
-                        </div>
-                        : <ListItemButton onClick={() => setDate(true)}>
-                            <ListItemText primary={'Select Date ...'} />
-                        </ListItemButton>}
-                </ListItem>
+                                // ref={dateInputRef}
+                                // id="standard-basic"
+                                // variant="filled"
+                                // size='small' 
+                                style={{width:"100%"}}
+                                
+                                />
+                                
+                        {/* </div> */}
+                    
             </List>
             <Divider />
             <List style={{ marginLeft: '20px' }}>
@@ -133,6 +132,7 @@ function CustomDrawer(props) {
                 Submit
             </Button>
             <Divider />
+            </div>
         </Drawer>
     );
 }
