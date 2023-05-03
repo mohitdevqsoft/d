@@ -15,16 +15,16 @@ import CustomModal from './CustomModal';
 
 
 
-export default function CustomTable({dataTable,columns}) {
+export default function CustomTable({ dataTable, columns }) {
 
-    
+
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 800 }}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
-                            {columns.map((column) => (
+                            {columns?.map((column) => (
                                 <TableCell
                                     key={column.id}
                                     align={"center"}
@@ -38,9 +38,9 @@ export default function CustomTable({dataTable,columns}) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {dataTable.map((row) => (
+                        {dataTable.map((row, id) => (
                             <TableRow
-                                key={row.id}
+                                key={id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 className='hover_table'
                             >
@@ -69,9 +69,9 @@ export default function CustomTable({dataTable,columns}) {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <CustomModal
+            {/* <CustomModal
                 isVisible={false}
-            />
+            /> */}
         </Paper>
 
 

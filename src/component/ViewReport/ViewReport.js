@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ContextHelper from '../../ContextHooks/ContextHelper';
 import { getDataFromServer } from '../../Utils/Axios';
+import CustomHeader from '../Common/CustomHeader';
+import CustomDrawer from '../Common/CustomDrawer';
 import CustomTable from '../Common/CustomTable';
 
 function ViewReport() {
   //---------- state, veriable, context and hooks
+  const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const {
     currentUser,
@@ -30,16 +33,24 @@ function ViewReport() {
     }
   }
 
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
   return (
 
-    <>
+    <div style={{ display: open && 'flex', width: '90%' }}>
+      <CustomHeader open={open} handleDrawerOpen={handleDrawerOpen} />
+      <CustomDrawer open={open} handleDrawerClose={handleDrawerClose} />
       <CustomTable
         dataTable={dataTable}
         columns={columns}
       />
-
-    </>
+    </div>
   )
 
 

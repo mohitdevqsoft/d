@@ -26,7 +26,7 @@ function Login() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState({})
 
-console.log("-----",currentUser);
+  console.log("-----", currentUser);
   //---------- life cycles
 
 
@@ -61,7 +61,7 @@ console.log("-----",currentUser);
     if (res?.response && res?.status === "success") {
       console.log("++++++>>>> res", res);
 
-      storeDataInLocalStorage({key: 'current_user',value:res?.response})
+      storeDataInLocalStorage({ key: 'current_user', value: res?.response })
 
       setCurrentUser(res?.response)
 
@@ -91,7 +91,7 @@ console.log("-----",currentUser);
   };
 
   return (
-    <div>
+    <div className='main_containar'>
       {loggedIn ?
         <div>
           <p>Welcome, {user.username}!</p>
@@ -125,7 +125,7 @@ console.log("-----",currentUser);
               {errorMessage?.password && <div className='errorMassage'>{errorMessage?.password}</div>}
 
             </div>
-{/* 
+            {/* 
             <div className="mb-3">
               <div className="custom-control custom-checkbox">
                 <input
