@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useRef } from 'react'
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import MuiAppBar from '@mui/material/AppBar';
@@ -11,10 +11,18 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AdbIcon from '@mui/icons-material/Adb';
 import SearchIcon from '@mui/icons-material/Search';
 import { Button } from '@mui/material';
+import LogoPattern from '../../Assets/LogoPattern.png'
+
 const drawerWidth = 240;
 
-function CustomHeader(props) {
-    const { open, handleDrawerOpen } = props;
+function CustomHeader({ open, handleDrawerOpen, filterData }) {
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        let object = {}
+        object.Search = { e, key: 'Search' }
+        filterData(object)
+    }
 
     const AppBar = styled(MuiAppBar, {
         shouldForwardProp: (prop) => prop !== 'open',
@@ -79,44 +87,59 @@ function CustomHeader(props) {
     return (
         <Box sx={{ display: 'flex' }}>
             <AppBar position="fixed" open={open}>
-                <Toolbar>
-                    <IconButton
-                        onClick={handleDrawerOpen}
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="open drawer"
-                        sx={{ mr: 2, ...(open && { display: 'none' }) }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="div"
-                        sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-                    >
+                <form onSubmit={handleSearch}>
+                    <Toolbar>
                         <IconButton
+                            onClick={handleDrawerOpen}
                             size="large"
-                            edge="end"
+                            edge="start"
                             color="inherit"
                             aria-label="open drawer"
-                            sx={{ mr: 2 }}
+                            sx={{ mr: 2, ...(open && { display: 'none' }) }}
                         >
-                            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                            <MenuIcon />
                         </IconButton>
-                    </Typography>
-                    <Search>
-                        <SearchIconWrapper>
-                            <SearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                            placeholder="Search…"
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </Search>
-                    <Button color="inherit">Logout</Button>
-                </Toolbar>
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="div"
+                            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+                        >
+                            <IconButton
+                                size="large"
+                                edge="end"
+                                color="inherit"
+                                aria-label="open drawer"
+                                sx={{ mr: 2 }}
+                            >
+                                {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                                 */}
+                                <img src={LogoPattern} alt="harry potter" style={{ height: 40, width: 60 }} />
+
+                            </IconButton>
+                        </Typography>
+                        <Search style={{ marginRight: 10 }}>
+                            <SearchIconWrapper>
+                                <SearchIcon />
+                            </SearchIconWrapper>
+                            <StyledInputBase
+                                placeholder="Search…"
+                                inputProps={{ 'aria-label': 'search' }}
+                                name='Search'
+                                id='Search'
+                            />
+                        </Search>
+                        <Button
+                            style={{ marginRight: 100 }}
+                            variant="contained"
+                            type="submit"
+                        >Search</Button>
+                        <Button
+                            style={{ marginRight: 50 }}
+                            variant="contained"
+                        >Logout</Button>
+                    </Toolbar>
+                </form>
             </AppBar>
         </Box>
     )

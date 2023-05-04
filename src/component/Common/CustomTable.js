@@ -15,25 +15,30 @@ import CustomModal from './CustomModal';
 
 
 
-export default function CustomTable({ dataTable, columns, isAdmin = false, call_back }) {
+export default function CustomTable({ dataTable, columns, isAdmin = false, call_back, searchValue }) {
     const listInnerRef = React.useRef();
     const [data, setData] = React.useState([])
+    const [allData, setAllData] = React.useState([])
     const [pageNumber, setPageNumber] = React.useState(0)
     const [pageOffsate, setPageOffsate] = React.useState(12)
 
+    console.log('allData', dataTable);
     React.useEffect(() => {
-        if (dataTable.length > 0) {
-            let local_data = dataTable
+        setAllData(dataTable)
+    }, [dataTable])
+
+    React.useEffect(() => {
+        if (allData.length > 0) {
+            let local_data = allData
             setData(local_data?.slice(pageNumber, pageOffsate))
-            console.log("local_data",local_data);
-        console.log("pagenumber",pageOffsate);
-
+            console.log("local_data", local_data);
+            console.log("pagenumber", pageOffsate);
         }
-    }, [dataTable,pageOffsate])
+    }, [allData, pageOffsate])
 
-    console.log("data",data);
+    console.log("data", data);
     return (
-        <Paper sx={{ width: '80%', overflow: 'hidden',marginTop:8.5 }}
+        <Paper sx={{ width: '80%', overflow: 'hidden', marginTop: 8.5 }}
         >
             <TableContainer sx={{ maxHeight: 800 }}
 
