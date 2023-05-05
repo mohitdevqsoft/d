@@ -11,15 +11,26 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 import { Checkbox, FormGroup, FormControlLabel } from '@mui/material';
-import dateTo from '../../Assets/selectDateTo.png'
 import MainLogo from '../../Assets/MainLogo.png'
-import dateFrom from '../../Assets/selectDateFrom.png'
+import StartDate from '../../Assets/selectDateTo.png'
+import EndDate from '../../Assets/selectDateFrom.png'
 
-const drawerWidth = 240;
 
 function CustomDrawer({ open, handleDrawerClose, filterData }) {
 
+    const [startDate, setStartDate] = useState();
+
+    React.useEffect(() => {
+        var timestamp = new Date(startDate).getTime();
+        console.log('Timestamp', timestamp)
+        filterData(timestamp)
+
+        var res = new Date(timestamp)
+        console.log('Date', res.getFullYear() + '-' + res.getMonth() + '-' + res.getDate())
+    })
+
     const dateInputRef = useRef(null);
+    const theme = useTheme();
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -36,7 +47,15 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
         filterData(object)
     }
 
-    const theme = useTheme();
+    // const handleStartDate = () => {
+    //     dateInputRef.current.showPicker()
+    //     console.log('startDate', dateInputRef.current.showPicker());
+    // }
+
+    // const handleEndDate = () => {
+    //     dateInputRef.current.showPicker()
+    // }
+
     const DrawerHeader = styled('div')(({ theme }) => ({
         display: 'flex',
         alignItems: 'center',
@@ -45,22 +64,13 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
         justifyContent: 'flex-end',
     }));
 
-    const handleDateTo = () => {
-        console.log('dateTO', dateInputRef.current.showPicker());
-        dateInputRef.current.showPicker()
-    }
-    const handleDateFrom = () => {
-        console.log('dateFROM', dateInputRef.current.showPicker());
-        dateInputRef.current.showPicker()
-    }
-
     return (
         <Drawer
             sx={{
-                width: drawerWidth,
+                width: 240,
                 flexShrink: 0,
                 '& .MuiDrawer-paper': {
-                    width: drawerWidth,
+                    width: 240,
                     boxSizing: 'border-box',
                 },
             }}
@@ -68,16 +78,16 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
             anchor="left"
             open={open}
         >
-            <div style={{ padding: 10, display: 'flex', justifyContent: "center", flexDirection: "column" }}>
+            <div style={styles.Container}>
                 <form onSubmit={handleSearch}>
                     <DrawerHeader>
-                        <img src={MainLogo} alt="harry potter" style={{ height: 60, width: 180 }} />
+                        <img src={MainLogo} alt="harry potter" style={styles.iconLogo} />
                         <IconButton onClick={handleDrawerClose}>
                             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                         </IconButton>
                     </DrawerHeader>
                     <Divider />
-                    <DrawerHeader style={{ textAlign: 'center' }}>
+                    <DrawerHeader style={styles.textCenter}>
                         <ListItemText
                             primary="Filter"
                             primaryTypographyProps={{
@@ -88,64 +98,71 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
                         />
                     </DrawerHeader>
                     <Divider />
-                    <List style={{ margin: 'revert' }}>
+                    <List style={styles.listContaint}>
                         <TextField
                             id="standard-basic"
                             label="Search Name"
                             name='Name'
                             variant="filled"
-                            style={{ width: "100%" }}
+                            style={styles.textInput}
                         />
                     </List>
                     <Divider />
-                    <List style={{ margin: 'revert' }}>
+                    <List style={styles.listContaint}>
                         <TextField
-                            type='calender'
                             id="standard-basic"
                             label="Search Study"
                             name='Study'
                             variant="filled"
-                            style={{ width: "100%" }}
+                            style={styles.textInput}
                         />
                     </List>
                     <Divider />
-                    <List style={{ margin: 'revert' }}>
-                        <input
+                    <List style={styles.listContaint}>
+                        <TextField
+                            id="standard-basic"
+                            label="Date"
+                            variant="filled"
                             type="date"
-                            onChange={(e) => console.log('StartDate', e.target.value)}
                             ref={dateInputRef}
-                            style={{ width: "100%", display: 'none' }}
+                            style={styles.textInput}
+                            onChange={date => setStartDate(date.target.value)}
                         />
-                        <input
+
+                        {/* <input
                             type="date"
-                            onChange={(e) => console.log('EndDate', e.target.value)}
                             ref={dateInputRef}
-                            style={{ width: "100%", display: 'none' }}
-                        />
-                        <div style={{ justifyContent: 'space-around', display: 'flex' }}>
+                            style={styles.textInput}
+                            onChange={date => setEndDate(date.target.value)}
+                        /> */}
+
+                        {/* <div style={{ justifyContent: 'space-around', display: 'flex' }}>
                             <p>From</p>
-                            <img src={dateTo} alt="harry potter" style={{ height: 30, width: 30 }} onClick={() => handleDateTo()} />
+                            <img src={StartDate} alt="harry potter" style={{ height: 30, width: 30 }} onClick={() => dateInputRef.current.showPicker()} />
                             <p>To</p>
-                            <img src={dateFrom} alt="harry potter" style={{ height: 32, width: 32 }} onClick={() => handleDateFrom()} />
-                        </div>
+                            <img src={EndDate} alt="harry potter" style={{ height: 32, width: 32 }} onClick={() => dateInputRef.current.showPicker()} />
+                        </div> */}
                     </List>
                     <Divider />
-                    <List style={{ display: 'flex', justifyContent: 'center', margin: 'revert' }}>
+                    <List style={styles.listCheckboxcontain}>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox
-                                onChange={(text) => filterData({ text, key: 'Urgent' })}
-                            />} label="Urgent" />
-                            <FormControlLabel control={<Checkbox
-                                onChange={(text) => filterData({ text, key: 'Pending' })}
-                            />} label="Pending" />
-                            <FormControlLabel control={<Checkbox
-                                onChange={(text) => filterData({ text, key: 'Complete' })}
-                            />} label="Complete" />
+                            <FormControlLabel control={
+                                <Checkbox
+                                    onChange={(e) => filterData({ e, key: 'Urgent' })} />}
+                                label="Urgent" />
+                            <FormControlLabel control={
+                                <Checkbox
+                                    onChange={(e) => filterData({ e, key: 'Pending' })} />}
+                                label="Pending" />
+                            <FormControlLabel control={
+                                <Checkbox
+                                    onChange={(e) => filterData({ e, key: 'Complete' })} />}
+                                label="Complete" />
                         </FormGroup>
                     </List>
                     <Divider />
                     <Button
-                        style={{ display: 'flex', margin: 'auto', width: '100%' }}
+                        style={styles.submit}
                         variant="outlined"
                         type="submit"
                         size="medium" >
@@ -157,5 +174,37 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
             </div>
         </Drawer>
     );
+}
+
+const styles = {
+    Container: {
+        padding: 10,
+        display: 'flex',
+        justifyContent: "center",
+        flexDirection: "column"
+    },
+    iconLogo: {
+        height: 60,
+        width: 180
+    },
+    textCenter: {
+        textAlign: 'center'
+    },
+    listContaint: {
+        margin: 'revert'
+    },
+    textInput: {
+        width: "100%"
+    },
+    listCheckboxcontain: {
+        display: 'flex',
+        justifyContent: 'center',
+        margin: 'revert'
+    },
+    submit: {
+        display: 'flex',
+        margin: 'auto',
+        width: '100%'
+    },
 }
 export default CustomDrawer;

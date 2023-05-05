@@ -15,7 +15,7 @@ import CustomModal from './CustomModal';
 
 
 
-export default function CustomTable({ dataTable, columns, isAdmin = false, call_back, searchValue }) {
+export default function CustomTable({ dataTable, columns, isAdmin = false, call_back, }) {
     const listInnerRef = React.useRef();
     const [data, setData] = React.useState([])
     const [allData, setAllData] = React.useState([])

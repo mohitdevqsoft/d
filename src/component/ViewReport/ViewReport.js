@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ContextHelper from '../../ContextHooks/ContextHelper';
 import { getDataFromServer, UploadImageToServer } from "../../Utils/Axios";
@@ -20,7 +20,6 @@ import ClearIcon from '@mui/icons-material/Clear';
 function ViewReport() {
   //---------- state, veriable, context and hooks
   const [open, setOpen] = React.useState(false);
-  const [searchValue, setSearchValue] = React.useState('TOSHIBA_MEC');
   const [isVisibleModal, setVisibleModal] = React.useState(false)
   const [dataModal, setDataModal] = React.useState({})
   const [getUplodImages, setGetUploadImages] = React.useState([])
@@ -29,14 +28,14 @@ function ViewReport() {
     historyAttach: true,
     uploadReport: true
   })
+  const [dataTable, setDataTable] = React.useState([]);
+  const [newFilterData, setNewFilterData] = React.useState();
 
   const navigate = useNavigate();
   const {
     currentUser,
     setCurrentUser
   } = ContextHelper()
-  const [dataTable, setDataTable] = React.useState([]);
-  const [newFilterData, setNewFilterData] = React.useState();
 
   React.useEffect(() => {
 
@@ -273,31 +272,41 @@ function ViewReport() {
   }
 
   const filterData = (text) => {
+    // console.log('key', text)
 
-    if (text.Search) {
+    if (text?.Search) {
+      let searchValue = text?.Search?.e.target.Search.value
+      var finalSearchResult = dataTable.filter(x => x?.name?.toLowerCase()?.includes(searchValue) || x?.study?.toLowerCase()?.includes(searchValue))
+      setNewFilterData(finalSearchResult)
+    }
+
+    if (text?.Name) {
+      let searchValue = text?.Name?.e.target.Name.value
+      var finalSearchResult = dataTable.filter(x => x?.name?.toLowerCase()?.includes(searchValue))
+      setNewFilterData(finalSearchResult)
+    }
+
+    if (text?.Study) {
+      let searchValue = text?.Study?.e.target.Study.value
+      var finalSearchResult = dataTable.filter(x => x?.study?.toLowerCase()?.includes(searchValue))
+      setNewFilterData(finalSearchResult)
+    }
+
+    if (text?.key === 'Urgent') {
       console.log('key', text)
-
-      let searchValue = text.Search.e.target.Search.value
-      var finalSearchResult = dataTable.filter(x => x.name.toLowerCase().includes(searchValue) || x.study.toLowerCase().includes(searchValue))
+      var finalSearchResult = dataTable.filter(x => x?.urgent === true)
       setNewFilterData(finalSearchResult)
     }
-
-    if (text.Name) {
-      console.log('key', text.Name)
-      let searchValue = text.Name.e.target.Name.value
-      var finalSearchResult = dataTable.filter(x => x.name.toLowerCase().includes(searchValue))
+    if (text?.key === 'Pending') {
+      console.log('key', text)
+      var finalSearchResult = dataTable.filter(x => x?.pending === true)
       setNewFilterData(finalSearchResult)
     }
-
-    if (text.Study) {
-      console.log('key', text.Study)
-
-      let searchValue = text.Study.e.target.Study.value
-      var finalSearchResult = dataTable.filter(x => x.study.toLowerCase().includes(searchValue))
+    if (text?.key === 'Complete') {
+      console.log('key', text)
+      var finalSearchResult = dataTable.filter(x => x?.complete === true)
       setNewFilterData(finalSearchResult)
     }
-
-    // console.log('searchValue', searchValue)
 
   }
 
@@ -316,7 +325,6 @@ function ViewReport() {
       <CustomTable
         dataTable={!newFilterData ? dataTable : newFilterData}
         columns={columns}
-        searchValue={searchValue}
         call_back={(data) => {
           setVisibleModal(true)
           setDataModal(data)
