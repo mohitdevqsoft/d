@@ -272,29 +272,28 @@ function ViewReport() {
   }
 
   const filterData = (text) => {
-    // console.log('key', text)
 
     if (text?.Search) {
-      let searchValue = text?.Search?.e.target.Search.value
+      let searchValue = text?.Search?.e.target.Search.value.toLowerCase()
       var finalSearchResult = dataTable.filter(x => x?.name?.toLowerCase()?.includes(searchValue) || x?.study?.toLowerCase()?.includes(searchValue))
       setNewFilterData(finalSearchResult)
     }
 
     if (text?.Name) {
-      let searchValue = text?.Name?.e.target.Name.value
+      let searchValue = text?.Name?.e.target.Name.value.toLowerCase()
       var finalSearchResult = dataTable.filter(x => x?.name?.toLowerCase()?.includes(searchValue))
       setNewFilterData(finalSearchResult)
     }
 
     if (text?.Study) {
-      let searchValue = text?.Study?.e.target.Study.value
+      let searchValue = text?.Study?.e.target.Study.value.toLowerCase()
       var finalSearchResult = dataTable.filter(x => x?.study?.toLowerCase()?.includes(searchValue))
       setNewFilterData(finalSearchResult)
     }
 
     if (text?.key === 'Urgent') {
       console.log('key', text)
-      var finalSearchResult = dataTable.filter(x => x?.urgent === true)
+      var finalSearchResult = dataTable.filter(x => x?.isUrject === true)
       setNewFilterData(finalSearchResult)
     }
     if (text?.key === 'Pending') {
@@ -308,6 +307,17 @@ function ViewReport() {
       setNewFilterData(finalSearchResult)
     }
 
+    if (text?.SelectDate) {
+      console.log('text', text?.SelectDate?.StartDate)
+      var finalSearchResult = dataTable.filter((x) => {
+        return (
+          new Date(x.Date.split(",")[0]).getTime()) === text?.SelectDate?.StartDate
+      })
+
+      console.log('finaslsearch', finalSearchResult)
+
+      setNewFilterData(finalSearchResult)
+    }
   }
 
   return (

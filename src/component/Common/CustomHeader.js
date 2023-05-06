@@ -12,10 +12,12 @@ import AdbIcon from '@mui/icons-material/Adb';
 import SearchIcon from '@mui/icons-material/Search';
 import { Button } from '@mui/material';
 import LogoPattern from '../../Assets/LogoPattern.png'
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
 function CustomHeader({ open, handleDrawerOpen, filterData }) {
+    const navigate = useNavigate();
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -137,6 +139,11 @@ function CustomHeader({ open, handleDrawerOpen, filterData }) {
                         <Button
                             style={{ marginRight: 50 }}
                             variant="contained"
+                            onClick={() => {
+                                localStorage.clear()
+                                navigate('/')
+                            }
+                            }
                         >Logout</Button>
                     </Toolbar>
                 </form>
