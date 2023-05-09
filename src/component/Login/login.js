@@ -29,16 +29,17 @@ function Login() {
   console.log("-----", currentUser);
   //---------- life cycles
 
-  React.useEffect(()=>{
-    if(currentUser?.token){
-    if (currentUser?.isadmin) {
-      navigate('/add-report') 
-  } else {
-      navigate('/view-report')
-  }
-}
+  React.useEffect(() => {
+    if (currentUser?.token) {
+      if (currentUser?.isadmin) {
+        navigate('/add-report')
+      }
+      //  else {
+      //     navigate('/view-report')
+      // }
+    }
 
-  },[])
+  }, [])
 
   //--------- user Login
 

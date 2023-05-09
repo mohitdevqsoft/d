@@ -19,15 +19,23 @@ import EndDate from '../../Assets/selectDateFrom.png'
 function CustomDrawer({ open, handleDrawerClose, filterData }) {
 
     const [startDate, setStartDate] = useState();
-
+    const [endDate, setEndtDate] = useState();
     React.useEffect(() => {
-        var timestamp = new Date(startDate).getTime();
-        console.log('Timestamp', timestamp)
-        filterData(timestamp)
-
-        var res = new Date(timestamp)
-        console.log('Date', res.getFullYear() + '-' + res.getMonth() + '-' + res.getDate())
-    })
+        let object = {}
+        if (startDate) {
+            var d = new Date(startDate)
+            let timeformat = d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear()
+            let timestamp = new Date(timeformat).getTime()
+            object.SelectDate = { 'StartDate': timestamp }
+        }
+        // if (endDate) {
+        //     var d = new Date(endDate)
+        //     let timeformat = '' + d.getDate() + '/' + '' + (d.getMonth() + 1) + '/' + d.getFullYear()
+        //     let timestamp = new Date(timeformat).getTime()
+        //     object.SelectDate = { 'EndDate': timestamp }
+        // }
+        filterData(object)
+    }, [startDate, endDate])
 
     const dateInputRef = useRef(null);
     const theme = useTheme();
@@ -47,14 +55,6 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
         filterData(object)
     }
 
-    // const handleStartDate = () => {
-    //     dateInputRef.current.showPicker()
-    //     console.log('startDate', dateInputRef.current.showPicker());
-    // }
-
-    // const handleEndDate = () => {
-    //     dateInputRef.current.showPicker()
-    // }
 
     const DrawerHeader = styled('div')(({ theme }) => ({
         display: 'flex',
@@ -121,13 +121,20 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
                     <List style={styles.listContaint}>
                         <TextField
                             id="standard-basic"
-                            label="Date"
                             variant="filled"
                             type="date"
                             ref={dateInputRef}
                             style={styles.textInput}
                             onChange={date => setStartDate(date.target.value)}
                         />
+                        {/* <TextField
+                            id="standard-basic"
+                            variant="filled"
+                            type="date"
+                            ref={dateInputRef}
+                            style={styles.textInput}
+                            onChange={date => setEndtDate(date.target.value)}
+                        /> */}
 
                         {/* <input
                             type="date"

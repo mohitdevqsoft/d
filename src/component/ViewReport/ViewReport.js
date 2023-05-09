@@ -326,8 +326,6 @@ function ViewReport() {
   };
 
   const filterData = (text) => {
-    // console.log('key', text)
-
     if (text?.Search) {
       let searchValue = text?.Search?.e.target.Search.value;
       var finalSearchResult = dataTable.filter(
