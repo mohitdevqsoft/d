@@ -16,7 +16,6 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ClearIcon from "@mui/icons-material/Clear";
-import FileUploader from "../upload";
 import { Spinner } from "react-bootstrap";
 const AddReport = () => {
   //---------- state, veriable, context and hooks
@@ -26,22 +25,24 @@ const AddReport = () => {
   const [isVisibleModal, setVisibleModal] = React.useState(false);
   const [getUplodImages, setGetUploadImages] = React.useState([]);
   const [getHistoryImages, setGetHistoryImages] = React.useState([]);
-  const [historyTitle, setHistoryTitle] = React.useState("");
+  const [updateData, setUpdateData] = React.useState({});
   const [loder, setLoder] = React.useState({});
 
   const [uploadSucess, setUploadSucess] = React.useState({
-    historyAttach: true,
-    uploadReport: true,
+    historyDelete: true,
+    ReportDelete: true,
   });
   React.useEffect(() => {
+    getTableDataInServer();
+  }, [currentUser.token]);
+
+  const getTableDataInServer = () => {
     getDataFromServer({
       end_point: "api/data",
       call_back: handleResponse,
       params: currentUser,
     });
-  }, [currentUser.token]);
-  console.log("+_=--", historyTitle);
-
+  };
   const handleResponse = (res) => {
     if (res?.status === "success" && res?.response) {
       setDataTable(res?.response);
@@ -49,19 +50,6 @@ const AddReport = () => {
       // alert(res?.error)
     }
   };
-  const handleResponseImge = (res) => {
-    console.log("----res----", res);
-    if (res?.status === "success" && res?.response) {
-      setUploadSucess({
-        ...uploadSucess,
-        uploadReport: false,
-      });
-    } else {
-      // alert(res?.error)
-    }
-  };
-
-  // console.log("====+getUplodImages+++++++++", getUplodImages);
 
   const RenderAddMoreDetails = () => {
     const hiddenFileInput = React.useRef(null);
@@ -77,69 +65,93 @@ const AddReport = () => {
     //------- upload image server
 
     const handleUplodImage = async (item, key) => {
-      setLoder({
-        isUpoadReport: true,
-      });
-      try {
-        const promisesArray = getUplodImages.map(async (file) => {
-          const responseImage = UploadImageToServer({
-            end_point: `upload/report/?id=${item.id}`,
-            data: file,
-            // call_back: handleResponseImge,
-            props: dataModal,
-          });
-
-          return responseImage;
+      if (key === "report") {
+        setLoder({
+          isUpoadReport: true,
         });
+        try {
+          const promisesArray = getUplodImages.map(async (file) => {
+            const responseImage = UploadImageToServer({
+              end_point: `upload/report/?id=${item.id}`,
+              data: file,
+              // call_back: handleResponseImge,
+              props: dataModal,
+            });
 
-        console.log("responseImage", promisesArray);
-
-        const dataArray = await Promise.all(promisesArray);
-        if (dataArray.length > 0) {
-          setLoder({});
-          setUploadSucess({
-            ...uploadSucess,
-            uploadReport: false,
+            return responseImage;
           });
-        } else {
-          setLoder({});
-        }
-        console.log("=-=dataArray-=--", dataArray);
-      } catch (err) {
-        setLoder(null);
-      }
 
-      // if (key === "report") {
-      //   UploadImageToServer({
-      //     end_point: `upload/report/?id=${item.id}`,
-      //     data: getUplodImages,
-      //     call_back: handleResponseImge,
-      //     props: dataModal,
-      //   });
-      // } else {
-      //   UploadImageToServer({
-      //     end_point: `upload/history/?id=${item.id}`,
-      //     data: getHistoryImages,
-      //     call_back: handleResponseImge,
-      //     props: item,
-      //   });
-      // }
+          console.log("responseImage", promisesArray);
+
+          const dataArray = await Promise.all(promisesArray);
+          if (dataArray.length > 0) {
+            setLoder({});
+            getTableDataInServer();
+            setUploadSucess({
+              historyDelete: false,
+            });
+          } else {
+            setLoder({});
+          }
+          console.log("=-=dataArray-=--", dataArray);
+        } catch (err) {
+          setLoder(null);
+        }
+      } else {
+        setLoder({
+          isHitoryUplod: true,
+        });
+        try {
+          const promisesArray = getHistoryImages.map(async (file) => {
+            const responseImage = UploadImageToServer({
+              end_point: `upload/history/?id=${item.id}`,
+              data: file,
+              // call_back: handleResponseImge,
+              props: dataModal,
+            });
+
+            return responseImage;
+          });
+
+          console.log("responseImage", promisesArray);
+
+          const dataArray = await Promise.all(promisesArray);
+          if (dataArray.length > 0) {
+            setLoder({});
+            getTableDataInServer();
+            setUploadSucess({
+              ReportDelete: false,
+            });
+          } else {
+            setLoder({});
+          }
+          console.log("=-=dataArray-=--", dataArray);
+        } catch (err) {
+          setLoder(null);
+        }
+      }
     };
 
     //------- update Data
 
     const handleUdateData = (item) => {
-      postDatatoServer({
-        end_point: `update/?id=${item.id}`,
-        body: {
-          title: historyTitle,
-          drRemark: " bhopal indore ",
-        },
-        call_back: (res) => {
-          console.log("=---", res);
-        },
-        props: { header: true, token: currentUser?.token },
-      });
+      console.log("-=-=-=-update data", updateData);
+
+      if (updateData.title || updateData.drRemark || updateData.isUrject) {
+        postDatatoServer({
+          end_point: `update/?id=${item.id}`,
+          body: updateData,
+          call_back: (res) => {
+            console.log("=---", res);
+            if (res?.status === "success" && res?.response) {
+              getTableDataInServer();
+            }
+          },
+          props: { header: true, token: currentUser?.token },
+        });
+      } else {
+        return;
+      }
     };
 
     return (
@@ -181,14 +193,35 @@ const AddReport = () => {
             <strong style={{ textAlign: "left" }}>Attach File</strong>
           </div>
           <div className="box_container">
-            <div className="flex-row d-flex">
+            <div className="flex-row d-flex flex-wrap">
               <textarea
+                style={{ marginBottom: 5 }}
                 name="Text1"
                 cols="30"
                 rows="3"
-                value={dataTable?.history?.title}
-                onChange={(e) => setHistoryTitle(e.target.value)}
+                value={dataModal?.history?.title}
+                onChange={(e) => {
+                  setDataModal({
+                    ...dataModal,
+                    history: { ...dataModal.history, title: e.target.value },
+                  });
+                  setUpdateData({ ...updateData, title: e.target.value });
+                }}
               ></textarea>
+              {dataModal?.history?.item?.length > 0 &&
+                dataModal?.history?.item.map((img, index) => {
+                  return (
+                    <>
+                      <div key={index} className="upload_fileBox mr-3">
+                        <img
+                          src={pdfImg}
+                          alt="harry potter"
+                          style={{ height: 60, width: 60 }}
+                        />
+                      </div>
+                    </>
+                  );
+                })}
               {getHistoryImages.length > 0 ? (
                 getHistoryImages.map((img, index) => {
                   return (
@@ -199,7 +232,7 @@ const AddReport = () => {
                           alt="harry potter"
                           style={{ height: 60, width: 60 }}
                         />
-                        {uploadSucess?.historyAttach && (
+                        {uploadSucess?.historyDelete && (
                           <div
                             className="delete_file"
                             onClick={() => {
@@ -269,22 +302,41 @@ const AddReport = () => {
             Upload Report
           </strong>
           <div className="box_container">
-            <div className="flex-row d-flex">
-              {getUplodImages.length > 0 ? (
-                getUplodImages.map((img, index) => {
+            <div className="flex-row d-flex flex-wrap">
+              {dataModal?.reports?.length > 0 &&
+                dataModal?.reports?.map((img, index) => {
                   return (
                     <>
                       <div
                         key={index}
                         className="upload_fileBox"
-                        style={{ height: 84 }}
+                        style={{ height: 84, marginTop: 5 }}
                       >
                         <img
                           src={docxImg}
                           alt="harry potter"
                           style={{ height: 60, width: 60 }}
                         />
-                        {uploadSucess?.uploadReport && (
+                      </div>
+                    </>
+                  );
+                })}
+              {getUplodImages.length > 0 ? (
+                getUplodImages.map((img, index) => {
+                  console.log("uploadSucess?.ReportDelete ", uploadSucess);
+                  return (
+                    <>
+                      <div
+                        key={index}
+                        className="upload_fileBox"
+                        style={{ height: 84, marginTop: 5 }}
+                      >
+                        <img
+                          src={docxImg}
+                          alt="harry potter"
+                          style={{ height: 60, width: 60 }}
+                        />
+                        {uploadSucess?.ReportDelete && (
                           <div
                             className="delete_file"
                             onClick={() => {
@@ -301,7 +353,7 @@ const AddReport = () => {
                       </div>
                       {index === getUplodImages.length - 1 && (
                         <div
-                          className="upload_fileBox mr-3"
+                          className="upload_fileBox mr-2 mt-1"
                           onClick={() => {
                             handleClick();
                           }}
@@ -314,8 +366,8 @@ const AddReport = () => {
                 })
               ) : (
                 <div
-                  className="upload_fileBox ms-0"
-                  style={{ width: 70, height: 84 }}
+                  className="upload_fileBox mr-2 mt-1"
+                  style={{ width: 67, height: 84 }}
                   onClick={handleClick}
                 >
                   <FileUploadIcon />
@@ -354,9 +406,21 @@ const AddReport = () => {
               row
               aria-labelledby="demo-row-radio-buttons-group-label"
               name="row-radio-buttons-group"
+              value={dataModal?.isUrject}
+              onChange={(val) => {
+                setDataModal({
+                  ...dataModal,
+                  isUrject: val.target.value,
+                });
+                if (val.target.value === "true") {
+                  setUpdateData({ ...updateData, isUrject: true });
+                } else {
+                  setUpdateData({ ...updateData, isUrject: false });
+                }
+              }}
             >
-              <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-              <FormControlLabel value="no" control={<Radio />} label="No" />
+              <FormControlLabel value={true} control={<Radio />} label="Yes" />
+              <FormControlLabel value={false} control={<Radio />} label="No" />
             </RadioGroup>
           </div>
 
@@ -365,12 +429,24 @@ const AddReport = () => {
           </strong>
           <div className="box_container">
             <div className="flex-row d-flex">
-              <textarea name="Text1" cols="70" rows="2"></textarea>
+              <textarea
+                name="Text1"
+                cols="70"
+                rows="2"
+                value={dataModal?.drRemark}
+                onChange={(e) => {
+                  setDataModal({
+                    ...dataModal,
+                    drRemark: e.target.value,
+                  });
+                  setUpdateData({ ...updateData, drRemark: e.target.value });
+                }}
+              ></textarea>
             </div>
             <div className="mt-1 justify-content-end d-flex">
               <ButtonCancel
                 variant="outline-primary"
-                // onClick={() =>
+                onClick={() => handleUdateData(dataModal)}
               >
                 Save
               </ButtonCancel>
@@ -380,14 +456,23 @@ const AddReport = () => {
           <div className="button_group mb-3">
             <ButtonCancel
               variant="outline-dark"
-              onClick={() => setVisibleModal(false)}
+              onClick={() => {
+                setVisibleModal(false);
+                setGetHistoryImages([]);
+                setGetUploadImages([]);
+              }}
             >
               CANCEL
             </ButtonCancel>
             <Button
               variant="contained"
               component="label"
-              onClick={() => setVisibleModal(false)}
+              onClick={() => {
+                setVisibleModal(false);
+                setGetHistoryImages([]);
+                setGetUploadImages([]);
+                handleUdateData(dataModal);
+              }}
             >
               SUBMIT
             </Button>
@@ -412,6 +497,8 @@ const AddReport = () => {
         call_back={(data) => {
           setVisibleModal(true);
           setDataModal(data);
+          setGetHistoryImages([]);
+          setGetUploadImages([]);
         }}
       />
 

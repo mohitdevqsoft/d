@@ -27,7 +27,7 @@ export default function CustomTable({
 
   // console.log('allData', dataTable);
   React.useEffect(() => {
-    setAllData(dataTable);
+    setAllData([dataTable]);
   }, [dataTable]);
 
   React.useEffect(() => {
@@ -70,7 +70,7 @@ export default function CustomTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => {
+            {dataTable.map((row) => {
               return (
                 <>
                   {!row?.reports?.length && (
@@ -102,7 +102,7 @@ export default function CustomTable({
               );
             })}
 
-            {data.map((row) => {
+            {dataTable.map((row) => {
               return (
                 <>
                   {row?.reports?.length ? (
