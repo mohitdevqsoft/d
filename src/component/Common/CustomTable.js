@@ -24,7 +24,6 @@ export default function CustomTable({
   const [allData, setAllData] = React.useState([]);
   const [pageNumber, setPageNumber] = React.useState(0);
   const [pageOffsate, setPageOffsate] = React.useState(12);
-
   // console.log('allData', dataTable);
   React.useEffect(() => {
     setAllData([dataTable]);
@@ -136,6 +135,8 @@ export default function CustomTable({
           </TableBody>
         </Table>
       </TableContainer>
+
+      {!dataTable.length && <h2 className="noData">Oops! No Results Found</h2>}
     </Paper>
   );
 }

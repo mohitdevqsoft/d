@@ -17,6 +17,9 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Spinner } from "react-bootstrap";
+import CustomHeader from "../Common/CustomHeader";
+import CustomDrawer from "../Common/CustomDrawer";
+
 const AddReport = () => {
   //---------- state, veriable, context and hooks
   const { currentUser } = ContextHelper();
@@ -27,6 +30,8 @@ const AddReport = () => {
   const [getHistoryImages, setGetHistoryImages] = React.useState([]);
   const [updateData, setUpdateData] = React.useState({});
   const [loder, setLoder] = React.useState({});
+  const [open, setOpen] = React.useState(false);
+  const [newFilterData, setNewFilterData] = React.useState();
 
   const [uploadSucess, setUploadSucess] = React.useState({
     historyDelete: true,
@@ -354,6 +359,7 @@ const AddReport = () => {
                       {index === getUplodImages.length - 1 && (
                         <div
                           className="upload_fileBox mr-2 mt-1"
+                          style={{ height: 84, marginTop: 5 }}
                           onClick={() => {
                             handleClick();
                           }}
@@ -406,7 +412,7 @@ const AddReport = () => {
               row
               aria-labelledby="demo-row-radio-buttons-group-label"
               name="row-radio-buttons-group"
-              value={dataModal?.isUrject}
+              value={dataModal?.isUrgent}
               onChange={(val) => {
                 setDataModal({
                   ...dataModal,
@@ -481,6 +487,76 @@ const AddReport = () => {
       </div>
     );
   };
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
+  const filterData = (text) => {
+    if (text?.Search) {
+      let searchValue = text?.Search?.e.target.Search.value;
+      var finalSearchResult = dataTable.filter(
+        (x) =>
+          x?.name?.toLowerCase()?.includes(searchValue) ||
+          x?.study?.toLowerCase()?.includes(searchValue)
+      );
+      setNewFilterData(finalSearchResult);
+    }
+
+    if (text?.Name) {
+      let searchValue = text?.Name?.e.target.Name.value;
+      var finalSearchResult = dataTable.filter((x) =>
+        x?.name?.toLowerCase()?.includes(searchValue)
+      );
+      setNewFilterData(finalSearchResult);
+    }
+
+    if (text?.Study) {
+      let searchValue = text?.Study?.e.target.Study.value;
+      var finalSearchResult = dataTable.filter((x) =>
+        x?.study?.toLowerCase()?.includes(searchValue)
+      );
+      setNewFilterData(finalSearchResult);
+    }
+
+    if (text?.SelectDate) {
+      var finalSearchResult = dataTable.filter((x) => {
+        return new Date(x.Date.split(",")[0]).getTime() === text?.SelectDate;
+      });
+      // var finalSearch = dataTable.map((x) => {
+      //   return (
+      //     new Date(x.Date.split(',')[0]).getTime()
+      //   )
+      // })
+      // console.log('finalSearch', finalSearch)
+      setNewFilterData(finalSearchResult);
+    }
+
+    if (text?.key === "Urgent") {
+      console.log("key", text);
+      var finalSearchResult = dataTable.filter(
+        (x) => x?.isUrgent === text?.e?.target?.checked
+      );
+      console.log("+_+_+_+_+__+", finalSearchResult);
+      setNewFilterData(finalSearchResult);
+    }
+    if (text?.key === "Pending") {
+      console.log("key", text);
+      var finalSearchResult = dataTable.filter((x) => x?.pending === true);
+      setNewFilterData(finalSearchResult);
+    }
+    if (text?.key === "Complete") {
+      console.log("key", text);
+      var finalSearchResult = dataTable.filter((x) => x?.complete === true);
+      setNewFilterData(finalSearchResult);
+    }
+    if (text?.key === "allData") {
+      console.log("=====", text?.key);
+      setNewFilterData(dataTable);
+    }
+  };
 
   return (
     <div
@@ -490,8 +566,18 @@ const AddReport = () => {
         justifyContent: "center",
       }}
     >
+      <CustomHeader
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        filterData={(text) => filterData(text)}
+      />
+      <CustomDrawer
+        open={open}
+        handleDrawerClose={handleDrawerClose}
+        filterData={(text) => filterData(text)}
+      />
       <CustomTable
-        dataTable={dataTable}
+        dataTable={!newFilterData ? dataTable : newFilterData}
         columns={columns}
         isAdmin={true}
         call_back={(data) => {
@@ -507,6 +593,7 @@ const AddReport = () => {
           isVisible={isVisibleModal}
           handleClose={() => setVisibleModal(false)}
           renderContent={RenderAddMoreDetails}
+          scroll={"scloll"}
         />
       )}
 

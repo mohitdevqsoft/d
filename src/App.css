@@ -42,7 +42,9 @@
   }
 }
 .hover_tables{
-  background: #f38989;
+  /* background: #f38989; */
+  background: rgb(246,6,6);
+background: linear-gradient(0deg, rgba(246,6,6,0.47102591036414565) 0%, rgba(131,223,169,0.3785889355742297) 100%);
 }
 .hover_table:hover {
   /* background-color: #7da5ab; */
@@ -105,4 +107,12 @@ position: relative;
   right: 0px;
   align-items: center;
   display: flex;
+}
+.noData{
+  justify-content: center;
+    display: flex;
+    margin-top: 52px;
+    margin-bottom: 52px;
+    /* color: red; */
+    opacity: 0.5;
 }
