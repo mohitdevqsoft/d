@@ -41,7 +41,9 @@
     transform: rotate(360deg);
   }
 }
-
+.hover_tables{
+  background: #f38989;
+}
 .hover_table:hover {
   /* background-color: #7da5ab; */
   background: rgb(200, 244, 244);
