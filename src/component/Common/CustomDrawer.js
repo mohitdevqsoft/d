@@ -12,30 +12,23 @@ import Button from '@mui/material/Button';
 
 import { Checkbox, FormGroup, FormControlLabel } from '@mui/material';
 import MainLogo from '../../Assets/MainLogo.png'
-import StartDate from '../../Assets/selectDateTo.png'
-import EndDate from '../../Assets/selectDateFrom.png'
+// import StartDate from '../../Assets/selectDateTo.png'
+// import EndDate from '../../Assets/selectDateFrom.png'
 
 
 function CustomDrawer({ open, handleDrawerClose, filterData }) {
 
     const [startDate, setStartDate] = useState();
-    const [endDate, setEndtDate] = useState();
     React.useEffect(() => {
         let object = {}
         if (startDate) {
             var d = new Date(startDate)
             let timeformat = d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear()
             let timestamp = new Date(timeformat).getTime()
-            object.SelectDate = { 'StartDate': timestamp }
+            object = { 'SelectDate': timestamp }
         }
-        // if (endDate) {
-        //     var d = new Date(endDate)
-        //     let timeformat = '' + d.getDate() + '/' + '' + (d.getMonth() + 1) + '/' + d.getFullYear()
-        //     let timestamp = new Date(timeformat).getTime()
-        //     object.SelectDate = { 'EndDate': timestamp }
-        // }
         filterData(object)
-    }, [startDate, endDate])
+    }, [startDate])
 
     const dateInputRef = useRef(null);
     const theme = useTheme();
@@ -127,21 +120,6 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
                             style={styles.textInput}
                             onChange={date => setStartDate(date.target.value)}
                         />
-                        {/* <TextField
-                            id="standard-basic"
-                            variant="filled"
-                            type="date"
-                            ref={dateInputRef}
-                            style={styles.textInput}
-                            onChange={date => setEndtDate(date.target.value)}
-                        /> */}
-
-                        {/* <input
-                            type="date"
-                            ref={dateInputRef}
-                            style={styles.textInput}
-                            onChange={date => setEndDate(date.target.value)}
-                        /> */}
 
                         {/* <div style={{ justifyContent: 'space-around', display: 'flex' }}>
                             <p>From</p>

@@ -177,12 +177,12 @@ function ViewReport() {
               onChange={(e) =>
                 setGetHistoryImages([...getHistoryImages, e.target.files[0]])
               }
-              // accept=".docx"
+            // accept=".docx"
             />
             <div className="mt-1 justify-content-end d-flex">
               <ButtonCancel
                 variant="outline-primary"
-                // onClick={() =>
+              // onClick={() =>
               >
                 Save
               </ButtonCancel>
@@ -298,7 +298,7 @@ function ViewReport() {
             <div className="mt-1 justify-content-end d-flex">
               <ButtonCancel
                 variant="outline-primary"
-                // onClick={() =>
+              // onClick={() =>
               >
                 Save
               </ButtonCancel>
@@ -352,6 +352,16 @@ function ViewReport() {
       setNewFilterData(finalSearchResult);
     }
 
+    if (text?.SelectDate) {
+      var finalSearchResult = dataTable.filter((x) => {
+        return (
+          new Date(x.Date.split(',')[0]).getTime() === text?.SelectDate
+        )
+      })
+      console.log('text', finalSearchResult)
+      setNewFilterData(finalSearchResult);
+    }
+
     if (text?.key === "Urgent") {
       console.log("key", text);
       var finalSearchResult = dataTable.filter((x) => x?.urgent === true);
@@ -370,7 +380,7 @@ function ViewReport() {
   };
 
   return (
-    <div style={{ display: "flex", width: "90%", justifyContent: "center" }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
       <CustomHeader
         open={open}
         handleDrawerOpen={handleDrawerOpen}
