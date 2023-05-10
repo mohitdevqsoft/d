@@ -1,6 +1,7 @@
 import React from "react";
 import ContextHelper from "../../ContextHooks/ContextHelper";
 import {
+  downloadFileServer,
   getDataFromServer,
   postDatatoServer,
   UploadImageToServer,
@@ -32,6 +33,8 @@ const AddReport = () => {
   const [loder, setLoder] = React.useState({});
   const [open, setOpen] = React.useState(false);
   const [newFilterData, setNewFilterData] = React.useState();
+  const [downloadUri, setDownloadUri] = React.useState({});
+  const [isVisibleDownload, setIsVisibleDownload] = React.useState(false);
 
   const [uploadSucess, setUploadSucess] = React.useState({
     historyDelete: true,
@@ -56,6 +59,72 @@ const AddReport = () => {
     }
   };
 
+  const downloadFile = () => {
+    if (downloadUri?.key === "history") {
+      downloadFileServer({
+        end_point: `getHistory/${downloadUri?.uri}`,
+        props: downloadUri?.uri,
+        call_back: (res) => {
+          setIsVisibleDownload(false);
+        },
+      });
+    } else if (downloadUri?.key === "report") {
+      downloadFileServer({
+        end_point: `getReport/${downloadUri?.uri}`,
+        props: downloadUri?.uri,
+        call_back: (res) => {
+          setIsVisibleDownload(false);
+        },
+      });
+    }
+  };
+  const RenderDownloadModal = () => {
+    return (
+      <div
+        style={{
+          height: 174,
+          width: 235,
+          alignItems: "center",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <h4
+          style={{
+            fontSize: 26,
+            textAlign: "center",
+          }}
+        >
+          Do you want to download report ?
+        </h4>
+        <div
+          style={{
+            flexDirection: "row",
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+            marginTop: 80,
+          }}
+        >
+          <h5
+            className="button_click"
+            style={{ color: "red", fontSize: 23, cursor: "pointer" }}
+            onClick={() => setIsVisibleDownload(false)}
+          >
+            NO
+          </h5>
+          <h5
+            className="button_click"
+            style={{ color: "green", fontSize: 23, cursor: "pointer" }}
+            onClick={() => downloadFile()}
+          >
+            YES
+          </h5>
+        </div>
+      </div>
+    );
+  };
+
   const RenderAddMoreDetails = () => {
     const hiddenFileInput = React.useRef(null);
     const hiddenFile = React.useRef(null);
@@ -75,7 +144,7 @@ const AddReport = () => {
           isUpoadReport: true,
         });
         try {
-          const promisesArray = getUplodImages.map(async (file) => {
+          const promisesArray = getUplodImages?.map(async (file) => {
             const responseImage = UploadImageToServer({
               end_point: `upload/report/?id=${item.id}`,
               data: file,
@@ -107,7 +176,7 @@ const AddReport = () => {
           isHitoryUplod: true,
         });
         try {
-          const promisesArray = getHistoryImages.map(async (file) => {
+          const promisesArray = getHistoryImages?.map(async (file) => {
             const responseImage = UploadImageToServer({
               end_point: `upload/history/?id=${item.id}`,
               data: file,
@@ -142,7 +211,7 @@ const AddReport = () => {
     const handleUdateData = (item) => {
       console.log("-=-=-=-update data", updateData);
 
-      if (updateData.title || updateData.drRemark || updateData.isUrject) {
+      if (updateData.title || updateData.drRemark || updateData.isUrgent) {
         postDatatoServer({
           end_point: `update/?id=${item.id}`,
           body: updateData,
@@ -214,10 +283,17 @@ const AddReport = () => {
                 }}
               ></textarea>
               {dataModal?.history?.item?.length > 0 &&
-                dataModal?.history?.item.map((img, index) => {
+                dataModal?.history?.item?.map((img, index) => {
                   return (
                     <>
-                      <div key={index} className="upload_fileBox mr-3">
+                      <div
+                        key={index}
+                        className="upload_fileBox mr-3"
+                        onClick={() => {
+                          setIsVisibleDownload(true);
+                          setDownloadUri({ uri: img?.uri, key: "history" });
+                        }}
+                      >
                         <img
                           src={pdfImg}
                           alt="harry potter"
@@ -227,8 +303,8 @@ const AddReport = () => {
                     </>
                   );
                 })}
-              {getHistoryImages.length > 0 ? (
-                getHistoryImages.map((img, index) => {
+              {getHistoryImages?.length > 0 ? (
+                getHistoryImages?.map((img, index) => {
                   return (
                     <>
                       <div key={index} className="upload_fileBox mr-3">
@@ -302,7 +378,31 @@ const AddReport = () => {
               )}
             </div>
           </div>
-
+          <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
+            Urjent
+          </strong>
+          <div className="box_container">
+            <RadioGroup
+              row
+              aria-labelledby="demo-row-radio-buttons-group-label"
+              name="row-radio-buttons-group"
+              value={dataModal?.isUrgent}
+              onChange={(val) => {
+                setDataModal({
+                  ...dataModal,
+                  isUrgent: val.target.value,
+                });
+                if (val.target.value === "true") {
+                  setUpdateData({ ...updateData, isUrgent: true });
+                } else {
+                  setUpdateData({ ...updateData, isUrgent: false });
+                }
+              }}
+            >
+              <FormControlLabel value={true} control={<Radio />} label="Yes" />
+              <FormControlLabel value={false} control={<Radio />} label="No" />
+            </RadioGroup>
+          </div>
           <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
             Upload Report
           </strong>
@@ -316,6 +416,10 @@ const AddReport = () => {
                         key={index}
                         className="upload_fileBox"
                         style={{ height: 84, marginTop: 5 }}
+                        onClick={() => {
+                          setIsVisibleDownload(true);
+                          setDownloadUri({ uri: img?.uri, key: "report" });
+                        }}
                       >
                         <img
                           src={docxImg}
@@ -326,108 +430,7 @@ const AddReport = () => {
                     </>
                   );
                 })}
-              {getUplodImages.length > 0 ? (
-                getUplodImages.map((img, index) => {
-                  console.log("uploadSucess?.ReportDelete ", uploadSucess);
-                  return (
-                    <>
-                      <div
-                        key={index}
-                        className="upload_fileBox"
-                        style={{ height: 84, marginTop: 5 }}
-                      >
-                        <img
-                          src={docxImg}
-                          alt="harry potter"
-                          style={{ height: 60, width: 60 }}
-                        />
-                        {uploadSucess?.ReportDelete && (
-                          <div
-                            className="delete_file"
-                            onClick={() => {
-                              let value = getUplodImages.filter(
-                                (item) => item?.name !== img?.name
-                              );
-                              console.log("val", value);
-                              setGetUploadImages(value);
-                            }}
-                          >
-                            <ClearIcon sx={{ color: "#fff", fontSize: 15 }} />
-                          </div>
-                        )}
-                      </div>
-                      {index === getUplodImages.length - 1 && (
-                        <div
-                          className="upload_fileBox mr-2 mt-1"
-                          style={{ height: 84, marginTop: 5 }}
-                          onClick={() => {
-                            handleClick();
-                          }}
-                        >
-                          <FileUploadIcon />
-                        </div>
-                      )}
-                    </>
-                  );
-                })
-              ) : (
-                <div
-                  className="upload_fileBox mr-2 mt-1"
-                  style={{ width: 67, height: 84 }}
-                  onClick={handleClick}
-                >
-                  <FileUploadIcon />
-                </div>
-              )}
             </div>
-
-            <input
-              type="file"
-              accept=".docx"
-              ref={hiddenFile}
-              style={{ display: "none" }}
-              onChange={(e) =>
-                setGetUploadImages([...getUplodImages, e.target.files[0]])
-              }
-            />
-            <div className="mt-1 justify-content-end d-flex">
-              {loder.isUpoadReport ? (
-                <Spinner animation="border" variant="primary" />
-              ) : (
-                <ButtonCancel
-                  variant="outline-primary"
-                  onClick={() => handleUplodImage(dataModal, "report")}
-                >
-                  Save
-                </ButtonCancel>
-              )}
-            </div>
-          </div>
-
-          <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
-            Urjent
-          </strong>
-          <div className="box_container">
-            <RadioGroup
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
-              value={dataModal?.isUrgent}
-              onChange={(val) => {
-                setDataModal({
-                  ...dataModal,
-                  isUrject: val.target.value,
-                });
-                if (val.target.value === "true") {
-                  setUpdateData({ ...updateData, isUrject: true });
-                } else {
-                  setUpdateData({ ...updateData, isUrject: false });
-                }
-              }}
-            >
-              <FormControlLabel value={true} control={<Radio />} label="Yes" />
-              <FormControlLabel value={false} control={<Radio />} label="No" />
-            </RadioGroup>
           </div>
 
           <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
@@ -437,25 +440,11 @@ const AddReport = () => {
             <div className="flex-row d-flex">
               <textarea
                 name="Text1"
-                cols="70"
+                cols="80"
                 rows="2"
+                readOnly={true}
                 value={dataModal?.drRemark}
-                onChange={(e) => {
-                  setDataModal({
-                    ...dataModal,
-                    drRemark: e.target.value,
-                  });
-                  setUpdateData({ ...updateData, drRemark: e.target.value });
-                }}
               ></textarea>
-            </div>
-            <div className="mt-1 justify-content-end d-flex">
-              <ButtonCancel
-                variant="outline-primary"
-                onClick={() => handleUdateData(dataModal)}
-              >
-                Save
-              </ButtonCancel>
             </div>
           </div>
 
@@ -525,12 +514,6 @@ const AddReport = () => {
       var finalSearchResult = dataTable.filter((x) => {
         return new Date(x.Date.split(",")[0]).getTime() === text?.SelectDate;
       });
-      // var finalSearch = dataTable.map((x) => {
-      //   return (
-      //     new Date(x.Date.split(',')[0]).getTime()
-      //   )
-      // })
-      // console.log('finalSearch', finalSearch)
       setNewFilterData(finalSearchResult);
     }
 
@@ -591,20 +574,22 @@ const AddReport = () => {
       {isVisibleModal && (
         <CustomModal
           isVisible={isVisibleModal}
-          handleClose={() => setVisibleModal(false)}
+          handleClose={() => {
+            setVisibleModal(false);
+            setGetHistoryImages([]);
+          }}
           renderContent={RenderAddMoreDetails}
           scroll={"scloll"}
         />
       )}
 
-      {/* {
-                visibleUploadModal &&
-                <CustomModal
-                    isVisible={visibleUploadModal}
-                    handleClose={() => setVisibleUploadModal(false)}
-                    renderContent={RenderAddMoreDetails}
-                />
-            } */}
+      {isVisibleDownload && (
+        <CustomModal
+          isVisible={isVisibleDownload}
+          handleClose={() => setIsVisibleDownload(false)}
+          renderContent={RenderDownloadModal}
+        />
+      )}
     </div>
   );
 };

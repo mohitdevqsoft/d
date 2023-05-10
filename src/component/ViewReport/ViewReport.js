@@ -1,17 +1,26 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import ContextHelper from "../../ContextHooks/ContextHelper";
-import { downloadFileServer, getDataFromServer } from "../../Utils/Axios";
+import {
+  UploadImageToServer,
+  downloadFileServer,
+  getDataFromServer,
+  postDatatoServer,
+} from "../../Utils/Axios";
 import CustomHeader from "../Common/CustomHeader";
 import CustomDrawer from "../Common/CustomDrawer";
 import CustomTable from "../Common/CustomTable";
 import ButtonCancel from "react-bootstrap/Button";
+import Button from "@mui/material/Button";
 import CustomModal from "../Common/CustomModal";
 import pdfImg from "../../Assets/list.png";
 import docxImg from "../../Assets/docx.png";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import ClearIcon from "@mui/icons-material/Clear";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+import { Spinner } from "react-bootstrap";
 
 function ViewReport() {
   //---------- state, veriable, context and hooks
@@ -20,25 +29,29 @@ function ViewReport() {
   const [dataModal, setDataModal] = React.useState({});
   const [isVisibleDownload, setIsVisibleDownload] = React.useState(false);
   const [downloadUri, setDownloadUri] = React.useState({});
+  const [getUplodImages, setGetUploadImages] = React.useState([]);
+  const [loder, setLoder] = React.useState({});
 
   const [uploadSucess, setUploadSucess] = React.useState({
-    historyAttach: true,
-    uploadReport: true,
+    ReportDelete: true,
   });
   const [dataTable, setDataTable] = React.useState([]);
   const [newFilterData, setNewFilterData] = React.useState();
+  const [updateData, setUpdateData] = React.useState({});
 
   const navigate = useNavigate();
   const { currentUser, setCurrentUser } = ContextHelper();
 
   React.useEffect(() => {
+    getTableDataInServer();
+  }, [currentUser.token]);
+  const getTableDataInServer = () => {
     getDataFromServer({
       end_point: "api/data",
       call_back: handleResponse,
       params: currentUser,
     });
-  }, [currentUser.token]);
-
+  };
   const handleResponse = (res) => {
     if (res?.status === "success" && res?.response) {
       setDataTable(res?.response);
@@ -65,28 +78,59 @@ function ViewReport() {
         hiddenFile.current.click();
       }
     };
+    //------- upload image server
+
+    const handleUplodImage = async (item, key) => {
+      if (key === "report") {
+        setLoder({
+          isUpoadReport: true,
+        });
+        try {
+          const promisesArray = getUplodImages?.map(async (file) => {
+            const responseImage = UploadImageToServer({
+              end_point: `upload/report/?id=${item.id}`,
+              data: file,
+              // call_back: handleResponseImge,
+              props: dataModal,
+            });
+
+            return responseImage;
+          });
+
+          const dataArray = await Promise.all(promisesArray);
+          if (dataArray.length > 0) {
+            setLoder({});
+            getTableDataInServer();
+            setUploadSucess({
+              uploadReport: false,
+            });
+          } else {
+            setLoder({});
+          }
+        } catch (err) {
+          setLoder(null);
+        }
+      }
+    };
 
     //------- update Data
 
     const handleUdateData = (item) => {
-      // console.log("-=-=-=-update data", updateData);
-      // if (updateData.title || updateData.drRemark || updateData.isUrject) {
-      //   postDatatoServer({
-      //     end_point: `update/?id=${item.id}`,
-      //     // body: updateData,
-      //     call_back: (res) => {
-      //       console.log("=---", res);
-      //       if (res?.status === "success" && res?.response) {
-      //         // getTableDataInServer();
-      //       }
-      //     },
-      //     props: { header: true, token: currentUser?.token },
-      //   });
-      // } else {
-      //   return;
-      // }
+      if (updateData.drRemark) {
+        postDatatoServer({
+          end_point: `update/?id=${item.id}`,
+          body: updateData,
+          call_back: (res) => {
+            if (res?.status === "success" && res?.response) {
+              getTableDataInServer();
+            }
+          },
+          props: { header: true, token: currentUser?.token },
+        });
+      } else {
+        return;
+      }
     };
-
     return (
       <div className="modal_view">
         <strong style={{ textAlign: "left", marginBottom: 5 }}>Details</strong>
@@ -136,7 +180,7 @@ function ViewReport() {
                 readOnly={true}
               ></textarea>
               {dataModal?.history?.item?.length > 0 &&
-                dataModal?.history?.item.map((img, index) => {
+                dataModal?.history?.item?.map((img, index) => {
                   return (
                     <>
                       <div
@@ -158,9 +202,23 @@ function ViewReport() {
                 })}
             </div>
           </div>
-
           <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
-            Report
+            Urjent
+          </strong>
+          <div className="box_container">
+            <RadioGroup
+              disabled
+              row
+              aria-labelledby="demo-row-radio-buttons-group-label"
+              name="row-radio-buttons-group"
+              value={dataModal?.isUrgent}
+            >
+              <FormControlLabel value={true} control={<Radio />} label="Yes" />
+              <FormControlLabel value={false} control={<Radio />} label="No" />
+            </RadioGroup>
+          </div>
+          <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
+            Upload Report
           </strong>
           <div className="box_container">
             <div className="flex-row d-flex flex-wrap">
@@ -186,34 +244,80 @@ function ViewReport() {
                     </>
                   );
                 })}
+              {getUplodImages?.length > 0 ? (
+                getUplodImages?.map((img, index) => {
+                  return (
+                    <>
+                      <div
+                        key={index}
+                        className="upload_fileBox"
+                        style={{ height: 84, marginTop: 5 }}
+                      >
+                        <img
+                          src={docxImg}
+                          alt="harry potter"
+                          style={{ height: 60, width: 60 }}
+                        />
+                        {uploadSucess?.ReportDelete && (
+                          <div
+                            className="delete_file"
+                            onClick={() => {
+                              let value = getUplodImages.filter(
+                                (item) => item?.name !== img?.name
+                              );
+                              setGetUploadImages(value);
+                            }}
+                          >
+                            <ClearIcon sx={{ color: "#fff", fontSize: 15 }} />
+                          </div>
+                        )}
+                      </div>
+                      {index === getUplodImages?.length - 1 && (
+                        <div
+                          className="upload_fileBox mr-2 mt-1"
+                          style={{ height: 84, marginTop: 5 }}
+                          onClick={() => {
+                            handleClick();
+                          }}
+                        >
+                          <FileUploadIcon />
+                        </div>
+                      )}
+                    </>
+                  );
+                })
+              ) : (
+                <div
+                  className="upload_fileBox mr-2 mt-1"
+                  style={{ width: 67, height: 84 }}
+                  onClick={handleClick}
+                >
+                  <FileUploadIcon />
+                </div>
+              )}
             </div>
-          </div>
 
-          <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
-            Urjent
-          </strong>
-          <div className="box_container">
-            <RadioGroup
-              disabled
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
-              value={dataModal?.isUrgent}
-              // onChange={(val) => {
-              //   setDataModal({
-              //     ...dataModal,
-              //     isUrject: val.target.value,
-              //   });
-              //   if (val.target.value === "true") {
-              //     setUpdateData({ ...updateData, isUrject: true });
-              //   } else {
-              //     setUpdateData({ ...updateData, isUrject: false });
-              //   }
-              // }}
-            >
-              <FormControlLabel value={true} control={<Radio />} label="Yes" />
-              <FormControlLabel value={false} control={<Radio />} label="No" />
-            </RadioGroup>
+            <input
+              type="file"
+              accept=".docx"
+              ref={hiddenFile}
+              style={{ display: "none" }}
+              onChange={(e) =>
+                setGetUploadImages([...getUplodImages, e.target.files[0]])
+              }
+            />
+            <div className="mt-1 justify-content-end d-flex">
+              {loder?.isUpoadReport ? (
+                <Spinner animation="border" variant="primary" />
+              ) : (
+                <ButtonCancel
+                  variant="outline-primary"
+                  onClick={() => handleUplodImage(dataModal, "report")}
+                >
+                  Save
+                </ButtonCancel>
+              )}
+            </div>
           </div>
 
           <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
@@ -226,20 +330,37 @@ function ViewReport() {
                 cols="70"
                 rows="2"
                 value={dataModal?.drRemark}
-                readOnly={true}
+                onChange={(e) => {
+                  setDataModal({
+                    ...dataModal,
+                    drRemark: e.target.value,
+                  });
+                  setUpdateData({ ...updateData, drRemark: e.target.value });
+                }}
               ></textarea>
             </div>
-          </div>
-
-          <div className="button_group mb-3">
-            <ButtonCancel
-              variant="outline-dark"
-              onClick={() => {
-                setVisibleModal(false);
-              }}
-            >
-              CANCEL
-            </ButtonCancel>
+            <div className="button_group mb-3">
+              <ButtonCancel
+                variant="outline-dark"
+                onClick={() => {
+                  setVisibleModal(false);
+                  setGetUploadImages([]);
+                }}
+              >
+                CANCEL
+              </ButtonCancel>
+              <Button
+                variant="contained"
+                component="label"
+                onClick={() => {
+                  setVisibleModal(false);
+                  setGetUploadImages([]);
+                  handleUdateData(dataModal);
+                }}
+              >
+                SUBMIT
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -276,36 +397,29 @@ function ViewReport() {
       var finalSearchResult = dataTable.filter((x) => {
         return new Date(x.Date.split(",")[0]).getTime() === text?.SelectDate;
       });
-      console.log("text", finalSearchResult);
       setNewFilterData(finalSearchResult);
     }
 
     if (text?.key === "Urgent") {
-      console.log("key", text?.e?.target?.checked);
       var finalSearchResult = dataTable.filter(
         (x) => x?.isUrgent === text?.e?.target?.checked
       );
       setNewFilterData(finalSearchResult);
-      console.log("======-=-=-=-==++_+_+", finalSearchResult);
     }
     if (text?.key === "Pending") {
-      console.log("key", text);
       var finalSearchResult = dataTable.filter((x) => x?.pending === true);
       setNewFilterData(finalSearchResult);
     }
     if (text?.key === "Complete") {
-      console.log("key", text);
       var finalSearchResult = dataTable.filter((x) => x?.complete === true);
       setNewFilterData(finalSearchResult);
     }
     if (text?.key === "allData") {
-      console.log("=====", text?.key);
       setNewFilterData(dataTable);
     }
   };
   const downloadFile = () => {
     if (downloadUri?.key === "history") {
-      console.log("downloadUri", downloadUri);
       downloadFileServer({
         end_point: `getHistory/${downloadUri?.uri}`,
         props: downloadUri?.uri,
@@ -324,8 +438,6 @@ function ViewReport() {
     }
   };
   const RenderDownloadModal = () => {
-    console.log("====", downloadUri);
-
     return (
       <div
         style={{
@@ -405,12 +517,17 @@ function ViewReport() {
           handleClose={() => setVisibleModal(false)}
           renderContent={RenderAddMoreDetails}
           scroll={"scloll"}
+          call_back={(data) => {
+            setVisibleModal(true);
+            setDataModal(data);
+            setGetUploadImages([]);
+          }}
         />
       )}
 
       {isVisibleDownload && (
         <CustomModal
-          isVisible={true}
+          isVisible={isVisibleDownload}
           handleClose={() => setIsVisibleDownload(false)}
           renderContent={RenderDownloadModal}
         />
