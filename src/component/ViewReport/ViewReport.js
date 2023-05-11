@@ -29,6 +29,7 @@ import {
 import pdfImg from "../../Assets/list.png";
 import docxImg from "../../Assets/docx.png";
 
+//---------- main component
 const ViewReport = () => {
   //---------- state, veriable, context and hooks
   const { currentUser } = ContextHelper();
@@ -53,6 +54,9 @@ const ViewReport = () => {
     getTableDataInServer();
   }, [currentUser.token]);
 
+  //------------ user's actions
+  //  Get Table Data
+
   const getTableDataInServer = () => {
     getDataFromServer({
       end_point: "api/data",
@@ -60,6 +64,8 @@ const ViewReport = () => {
       params: currentUser,
     });
   };
+
+  // Get Call_back Response data
   const handleResponse = (res) => {
     if (res?.status === "success" && res?.response) {
       setDataTable(res?.response);
@@ -67,6 +73,8 @@ const ViewReport = () => {
       // alert(res?.error)
     }
   };
+
+  // Download Report and history image
 
   const downloadFile = () => {
     if (downloadUri?.key === "history") {
@@ -87,6 +95,9 @@ const ViewReport = () => {
       });
     }
   };
+
+  // Renders download modal
+
   const RenderDownloadModal = () => {
     return (
       <div
@@ -134,7 +145,77 @@ const ViewReport = () => {
     );
   };
 
-  const RenderAddMoreDetails = () => {
+  // Open SideBar Action
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  // Close SideBar Action
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
+  // Fiter Data
+  const filterData = (text) => {
+    if (text?.Search) {
+      let searchValue = text?.Search?.e.target.Search.value;
+      let finalSearchResult = dataTable.filter(
+        (x) =>
+          x?.name?.toLowerCase()?.includes(searchValue) ||
+          x?.study?.toLowerCase()?.includes(searchValue)
+      );
+      setNewFilterData(finalSearchResult);
+    }
+
+    if (text?.Name) {
+      let searchValue = text?.Name?.e.target.Name.value;
+      let finalSearchResult = dataTable.filter((x) =>
+        x?.name?.toLowerCase()?.includes(searchValue)
+      );
+      setNewFilterData(finalSearchResult);
+    }
+
+    if (text?.Study) {
+      let searchValue = text?.Study?.e.target.Study.value;
+      let finalSearchResult = dataTable.filter((x) =>
+        x?.study?.toLowerCase()?.includes(searchValue)
+      );
+      setNewFilterData(finalSearchResult);
+    }
+
+    if (text?.SelectDate) {
+      let finalSearchResult = dataTable.filter((x) => {
+        return new Date(x.Date.split(",")[0]).getTime() === text?.SelectDate;
+      });
+      setNewFilterData(finalSearchResult);
+    }
+
+    if (text?.key === "Urgent") {
+      console.log("key", text);
+      var finalSearchResult = dataTable.filter(
+        (x) => x?.isUrgent === text?.e?.target?.checked
+      );
+      console.log("+_+_+_+_+__+", finalSearchResult);
+      setNewFilterData(finalSearchResult);
+    }
+    if (text?.key === "Pending") {
+      console.log("key", text);
+      let finalSearchResult = dataTable.filter((x) => x?.pending === true);
+      setNewFilterData(finalSearchResult);
+    }
+    if (text?.key === "Complete") {
+      console.log("key", text);
+      let finalSearchResult = dataTable.filter((x) => x?.complete === true);
+      setNewFilterData(finalSearchResult);
+    }
+    if (text?.key === "allData") {
+      console.log("=====", text?.key);
+      setNewFilterData(dataTable);
+    }
+  };
+  // Renders ViewMore  modal
+
+  const RenderViewMoreDetails = () => {
     const hiddenFileInput = React.useRef(null);
     const hiddenFile = React.useRef(null);
     const handleClick = (key) => {
@@ -145,7 +226,7 @@ const ViewReport = () => {
       }
     };
 
-    //------- upload image server
+    //------- upload File server
 
     const handleUplodImage = async (item, key) => {
       if (key === "report") {
@@ -216,7 +297,6 @@ const ViewReport = () => {
     };
 
     //------- update Data
-
     const handleUdateData = (item) => {
       console.log("-=-=-=-update data", updateData);
 
@@ -236,6 +316,8 @@ const ViewReport = () => {
         return;
       }
     };
+
+    //----------------------return------------------
 
     return (
       <div className="modal_view">
@@ -266,290 +348,266 @@ const ViewReport = () => {
         </div>
 
         <div id="add_history">
-          <div
-            className="d-flex flex-row justify-content-between"
-            style={{ width: "55%", marginTop: 40 }}
-          >
-            <strong style={{ textAlign: "left", marginBottom: 5 }}>
-              Add History
-            </strong>
-            <strong style={{ textAlign: "left" }}>Attach File</strong>
-          </div>
-          <div className="box_container">
-            <div className="flex-row d-flex flex-wrap">
-              <textarea
-                style={{ marginBottom: 5 }}
-                name="Text1"
-                cols="30"
-                rows="3"
-                value={dataModal?.history?.title}
-                onChange={(e) => {
-                  setDataModal({
-                    ...dataModal,
-                    history: { ...dataModal.history, title: e.target.value },
-                  });
-                  setUpdateData({ ...updateData, title: e.target.value });
-                }}
-              ></textarea>
-              {dataModal?.history?.item?.length > 0 &&
-                dataModal?.history?.item?.map((img, index) => {
-                  return (
-                    <>
-                      <div
-                        key={index}
-                        className="upload_fileBox mr-3"
-                        onClick={() => {
-                          setIsVisibleDownload(true);
-                          setDownloadUri({ uri: img?.uri, key: "history" });
-                        }}
-                      >
-                        <img
-                          src={pdfImg}
-                          alt="harry potter"
-                          style={{ height: 60, width: 60 }}
-                        />
-                      </div>
-                    </>
-                  );
-                })}
-              {getHistoryImages?.length > 0 ? (
-                getHistoryImages?.map((img, index) => {
-                  return (
-                    <>
-                      <div key={index} className="upload_fileBox mr-3">
-                        <img
-                          src={pdfImg}
-                          alt="harry potter"
-                          style={{ height: 60, width: 60 }}
-                        />
-                        {uploadSucess?.historyDelete && (
+          {/* ------------------- history View  */}
+          <>
+            <div
+              className="d-flex flex-row justify-content-between"
+              style={{ width: "55%", marginTop: 40 }}
+            >
+              <strong style={{ textAlign: "left", marginBottom: 5 }}>
+                Add History
+              </strong>
+              <strong style={{ textAlign: "left" }}>Attach File</strong>
+            </div>
+
+            <div className="box_container">
+              <div className="flex-row d-flex flex-wrap">
+                <textarea
+                  style={{ marginBottom: 5 }}
+                  name="Text1"
+                  cols="30"
+                  rows="3"
+                  value={dataModal?.history?.title}
+                  onChange={(e) => {
+                    setDataModal({
+                      ...dataModal,
+                      history: { ...dataModal.history, title: e.target.value },
+                    });
+                    setUpdateData({ ...updateData, title: e.target.value });
+                  }}
+                ></textarea>
+                {
+                  // dataModal?.history?.item?.length > 0 &&
+                  Array.isArray(dataModal?.history?.item) &&
+                    dataModal?.history?.item?.map((img, index) => {
+                      return (
+                        <>
                           <div
-                            className="delete_file"
+                            key={index}
+                            className="upload_fileBox mr-3"
                             onClick={() => {
-                              let value = getHistoryImages.filter(
-                                (item) => item?.name !== img?.name
-                              );
-                              console.log("val", value);
-                              setGetHistoryImages(value);
+                              setIsVisibleDownload(true);
+                              setDownloadUri({ uri: img?.uri, key: "history" });
                             }}
                           >
-                            <ClearIcon sx={{ color: "#fff", fontSize: 15 }} />
+                            <img
+                              src={pdfImg}
+                              alt="harry potter"
+                              style={{ height: 60, width: 60 }}
+                            />
+                          </div>
+                        </>
+                      );
+                    })
+                }
+                {getHistoryImages?.length > 0 ? (
+                  getHistoryImages?.map((img, index) => {
+                    return (
+                      <>
+                        <div key={index} className="upload_fileBox mr-3">
+                          <img
+                            src={pdfImg}
+                            alt="harry potter"
+                            style={{ height: 60, width: 60 }}
+                          />
+                          {uploadSucess?.historyDelete && (
+                            <div
+                              className="delete_file"
+                              onClick={() => {
+                                let value = getHistoryImages.filter(
+                                  (item) => item?.name !== img?.name
+                                );
+                                console.log("val", value);
+                                setGetHistoryImages(value);
+                              }}
+                            >
+                              <ClearIcon sx={{ color: "#fff", fontSize: 15 }} />
+                            </div>
+                          )}
+                        </div>
+                        {index === getHistoryImages.length - 1 && (
+                          <div
+                            className="upload_fileBox mr-3"
+                            onClick={() => {
+                              handleClick("attach");
+                            }}
+                          >
+                            <FileUploadIcon />
                           </div>
                         )}
-                      </div>
-                      {index === getHistoryImages.length - 1 && (
-                        <div
-                          className="upload_fileBox mr-3"
-                          onClick={() => {
-                            handleClick("attach");
-                          }}
-                        >
-                          <FileUploadIcon />
-                        </div>
-                      )}
-                    </>
-                  );
-                })
-              ) : (
-                <div
-                  className="upload_fileBox mr-3"
-                  onClick={() => {
-                    handleClick("attach");
-                  }}
-                >
-                  <FileUploadIcon />
-                </div>
-              )}
-            </div>
+                      </>
+                    );
+                  })
+                ) : (
+                  <div
+                    className="upload_fileBox mr-3"
+                    onClick={() => {
+                      handleClick("attach");
+                    }}
+                  >
+                    <FileUploadIcon />
+                  </div>
+                )}
+              </div>
 
-            <input
-              type="file"
-              ref={hiddenFileInput}
-              style={{ display: "none" }}
-              onChange={(e) =>
-                setGetHistoryImages([...getHistoryImages, e.target.files[0]])
-              }
-              // accept=".docx"
-            />
-            <div className="mt-1 justify-content-end d-flex">
-              {loder.isHitoryUplod ? (
-                <Spinner animation="border" variant="primary" />
-              ) : (
-                <ButtonCancel
-                  variant="outline-primary"
-                  onClick={() => {
-                    handleUplodImage(dataModal, "history");
-                    handleUdateData(dataModal);
-                  }}
-                >
-                  Save
-                </ButtonCancel>
-              )}
-            </div>
-          </div>
-          <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
-            Urjent
-          </strong>
-          <div className="box_container">
-            <RadioGroup
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
-              value={dataModal?.isUrgent}
-              onChange={(val) => {
-                setDataModal({
-                  ...dataModal,
-                  isUrgent: val.target.value,
-                });
-                if (val.target.value === "true") {
-                  setUpdateData({ ...updateData, isUrgent: true });
-                } else {
-                  setUpdateData({ ...updateData, isUrgent: false });
+              <input
+                type="file"
+                ref={hiddenFileInput}
+                style={{ display: "none" }}
+                onChange={(e) =>
+                  setGetHistoryImages([...getHistoryImages, e.target.files[0]])
                 }
-              }}
-            >
-              <FormControlLabel value={true} control={<Radio />} label="Yes" />
-              <FormControlLabel value={false} control={<Radio />} label="No" />
-            </RadioGroup>
-          </div>
-          <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
-            Upload Report
-          </strong>
-          <div className="box_container">
-            <div className="flex-row d-flex flex-wrap">
-              {dataModal?.reports?.length > 0 &&
-                dataModal?.reports?.map((img, index) => {
-                  return (
-                    <>
-                      <div
-                        key={index}
-                        className="upload_fileBox"
-                        style={{ height: 84, marginTop: 5 }}
-                        onClick={() => {
-                          setIsVisibleDownload(true);
-                          setDownloadUri({ uri: img?.uri, key: "report" });
-                        }}
-                      >
-                        <img
-                          src={docxImg}
-                          alt="harry potter"
-                          style={{ height: 60, width: 60 }}
-                        />
-                      </div>
-                    </>
-                  );
-                })}
+                // accept=".docx"
+              />
+              <div className="mt-1 justify-content-end d-flex">
+                {loder.isHitoryUplod ? (
+                  <Spinner animation="border" variant="primary" />
+                ) : (
+                  <ButtonCancel
+                    variant="outline-primary"
+                    onClick={() => {
+                      handleUplodImage(dataModal, "history");
+                      handleUdateData(dataModal);
+                    }}
+                  >
+                    Save
+                  </ButtonCancel>
+                )}
+              </div>
             </div>
-          </div>
+          </>
 
-          <strong style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}>
-            Doctor Remarks
-          </strong>
-          <div className="box_container">
-            <div className="flex-row d-flex">
-              <textarea
-                name="Text1"
-                cols="80"
-                rows="2"
-                readOnly={true}
-                value={dataModal?.drRemark}
-              ></textarea>
+          {/* ------------------- isUrjent  View  */}
+          <>
+            <strong
+              style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}
+            >
+              Urjent
+            </strong>
+
+            <div className="box_container">
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={dataModal?.isUrgent}
+                onChange={(val) => {
+                  setDataModal({
+                    ...dataModal,
+                    isUrgent: val.target.value,
+                  });
+                  if (val.target.value === "true") {
+                    setUpdateData({ ...updateData, isUrgent: true });
+                  } else {
+                    setUpdateData({ ...updateData, isUrgent: false });
+                  }
+                }}
+              >
+                <FormControlLabel
+                  value={true}
+                  control={<Radio />}
+                  label="Yes"
+                />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label="No"
+                />
+              </RadioGroup>
             </div>
-          </div>
+          </>
 
-          <div className="button_group mb-3">
-            <ButtonCancel
-              variant="outline-dark"
-              onClick={() => {
-                setVisibleModal(false);
-                setGetHistoryImages([]);
-                setGetUploadImages([]);
-              }}
+          {/* ------------------- Report  Upload and View  */}
+          <>
+            <strong
+              style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}
             >
-              CANCEL
-            </ButtonCancel>
-            <Button
-              variant="contained"
-              component="label"
-              onClick={() => {
-                setVisibleModal(false);
-                setGetHistoryImages([]);
-                setGetUploadImages([]);
-                handleUdateData(dataModal);
-              }}
+              Upload Report
+            </strong>
+            <div className="box_container">
+              <div className="flex-row d-flex flex-wrap">
+                {
+                  // dataModal?.reports?.length > 0 &&
+                  Array.isArray(dataModal?.reports) &&
+                    dataModal?.reports?.map((img, index) => {
+                      return (
+                        <>
+                          <div
+                            key={index}
+                            className="upload_fileBox"
+                            style={{ height: 84, marginTop: 5 }}
+                            onClick={() => {
+                              setIsVisibleDownload(true);
+                              setDownloadUri({ uri: img?.uri, key: "report" });
+                            }}
+                          >
+                            <img
+                              src={docxImg}
+                              alt="harry potter"
+                              style={{ height: 60, width: 60 }}
+                            />
+                          </div>
+                        </>
+                      );
+                    })
+                }
+              </div>
+            </div>
+          </>
+
+          {/* ------------------- DrRemart  View  */}
+          <>
+            <strong
+              style={{ textAlign: "left", marginTop: 40, marginBottom: 5 }}
             >
-              SUBMIT
-            </Button>
-          </div>
+              Doctor Remarks
+            </strong>
+            <div className="box_container">
+              <div className="flex-row d-flex">
+                <textarea
+                  name="Text1"
+                  cols="80"
+                  rows="2"
+                  readOnly={true}
+                  value={dataModal?.drRemark}
+                ></textarea>
+              </div>
+            </div>
+          </>
+
+          {/* -------------------Button Save And Cancel  */}
+          <>
+            <div className="button_group mb-3">
+              <ButtonCancel
+                variant="outline-dark"
+                onClick={() => {
+                  setVisibleModal(false);
+                  setGetHistoryImages([]);
+                  setGetUploadImages([]);
+                }}
+              >
+                CANCEL
+              </ButtonCancel>
+              <Button
+                variant="contained"
+                component="label"
+                onClick={() => {
+                  setVisibleModal(false);
+                  setGetHistoryImages([]);
+                  setGetUploadImages([]);
+                  handleUdateData(dataModal);
+                }}
+              >
+                SUBMIT
+              </Button>
+            </div>
+          </>
         </div>
       </div>
     );
   };
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
-  const filterData = (text) => {
-    if (text?.Search) {
-      let searchValue = text?.Search?.e.target.Search.value;
-      var finalSearchResult = dataTable.filter(
-        (x) =>
-          x?.name?.toLowerCase()?.includes(searchValue) ||
-          x?.study?.toLowerCase()?.includes(searchValue)
-      );
-      setNewFilterData(finalSearchResult);
-    }
-
-    if (text?.Name) {
-      let searchValue = text?.Name?.e.target.Name.value;
-      var finalSearchResult = dataTable.filter((x) =>
-        x?.name?.toLowerCase()?.includes(searchValue)
-      );
-      setNewFilterData(finalSearchResult);
-    }
-
-    if (text?.Study) {
-      let searchValue = text?.Study?.e.target.Study.value;
-      var finalSearchResult = dataTable.filter((x) =>
-        x?.study?.toLowerCase()?.includes(searchValue)
-      );
-      setNewFilterData(finalSearchResult);
-    }
-
-    if (text?.SelectDate) {
-      var finalSearchResult = dataTable.filter((x) => {
-        return new Date(x.Date.split(",")[0]).getTime() === text?.SelectDate;
-      });
-      setNewFilterData(finalSearchResult);
-    }
-
-    if (text?.key === "Urgent") {
-      console.log("key", text);
-      var finalSearchResult = dataTable.filter(
-        (x) => x?.isUrgent === text?.e?.target?.checked
-      );
-      console.log("+_+_+_+_+__+", finalSearchResult);
-      setNewFilterData(finalSearchResult);
-    }
-    if (text?.key === "Pending") {
-      console.log("key", text);
-      var finalSearchResult = dataTable.filter((x) => x?.pending === true);
-      setNewFilterData(finalSearchResult);
-    }
-    if (text?.key === "Complete") {
-      console.log("key", text);
-      var finalSearchResult = dataTable.filter((x) => x?.complete === true);
-      setNewFilterData(finalSearchResult);
-    }
-    if (text?.key === "allData") {
-      console.log("=====", text?.key);
-      setNewFilterData(dataTable);
-    }
-  };
-
+  //---------- main return
   return (
     <div
       style={{
@@ -558,16 +616,24 @@ const ViewReport = () => {
         justifyContent: "center",
       }}
     >
+      {/* ------------------- Header */}
+
       <CustomHeader
         open={open}
         handleDrawerOpen={handleDrawerOpen}
         filterData={(text) => filterData(text)}
       />
+
+      {/* ------------------- SideBar View  */}
+
       <CustomDrawer
         open={open}
         handleDrawerClose={handleDrawerClose}
         filterData={(text) => filterData(text)}
       />
+
+      {/* ------------------- Table View  */}
+
       <CustomTable
         dataTable={!newFilterData ? dataTable : newFilterData}
         columns={columns}
@@ -580,6 +646,8 @@ const ViewReport = () => {
         }}
       />
 
+      {/* -------------------ViewMore Modal  View  */}
+
       {isVisibleModal && (
         <CustomModal
           isVisible={isVisibleModal}
@@ -587,10 +655,12 @@ const ViewReport = () => {
             setVisibleModal(false);
             setGetHistoryImages([]);
           }}
-          renderContent={RenderAddMoreDetails}
+          renderContent={RenderViewMoreDetails}
           scroll={"scloll"}
         />
       )}
+
+      {/* ------------------- Download Modal Confirm   */}
 
       {isVisibleDownload && (
         <CustomModal
@@ -603,8 +673,10 @@ const ViewReport = () => {
   );
 };
 
+//---------- export component
 export default ViewReport;
 
+//---------- constants
 const columns = [
   {
     id: "name",
@@ -614,19 +686,10 @@ const columns = [
     id: "study",
     label: "Study",
   },
-  // {
-  //     id: 'history', label: 'History',
-  // },
   {
     id: "date",
     label: "Date",
   },
-  // {
-  //     id: 'report', label: 'Report',
-  // },
-  // {
-  //     id: 'urjent', label: 'Urjent',
-  // },
   {
     id: "addMore",
     label: "Other Information",

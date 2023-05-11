@@ -1,6 +1,5 @@
-import React, { useCallback, useRef } from "react";
+import React from "react";
 import { styled, alpha } from "@mui/material/styles";
-import AppBar from "@mui/material/AppBar";
 import MuiAppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -8,7 +7,6 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
-import AdbIcon from "@mui/icons-material/Adb";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@mui/material";
 import LogoPattern from "../../Assets/LogoPattern.png";
@@ -19,7 +17,7 @@ const drawerWidth = 240;
 
 function CustomHeader({ open, handleDrawerOpen, filterData }) {
   const navigate = useNavigate();
-  const { currentUser, setCurrentUser } = ContextHelper();
+  const { setCurrentUser } = ContextHelper();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -126,6 +124,7 @@ function CustomHeader({ open, handleDrawerOpen, filterData }) {
                 />
               </IconButton>
             </Typography>
+
             <Search style={{ marginRight: 10 }}>
               <SearchIconWrapper>
                 <SearchIcon />
