@@ -68,7 +68,7 @@ function AddReport() {
   // Get Call_back Response data
   const handleResponse = (res) => {
     if (res?.status === "success" && res?.response) {
-      setDataTable(res?.response);
+      setDataTable(res?.response?.reverse());
     } else {
       // alert(res?.error)
     }
@@ -113,8 +113,11 @@ function AddReport() {
     }
 
     if (text?.SelectDate) {
+      console.log("text?.SelectDate", text?.SelectDate);
+
       let finalSearchResult = dataTable.filter((x) => {
-        return new Date(x.Date.split(",")[0]).getTime() === text?.SelectDate;
+        var dateSplit = x.Date.split(",");
+        return text?.SelectDate == dateSplit[0];
       });
       setNewFilterData(finalSearchResult);
     }

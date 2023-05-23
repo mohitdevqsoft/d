@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5500/";
+// const BASE_URL = "http://localhost:5500/";
+const BASE_URL = "http://pacs.iotcom.io:5500/";
 
 export const getDataFromServer = async ({
   end_point,

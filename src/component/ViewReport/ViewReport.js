@@ -68,7 +68,7 @@ const ViewReport = () => {
   // Get Call_back Response data
   const handleResponse = (res) => {
     if (res?.status === "success" && res?.response) {
-      setDataTable(res?.response);
+      setDataTable(res?.response?.reverse());
     } else {
       // alert(res?.error)
     }
@@ -195,7 +195,6 @@ const ViewReport = () => {
       var finalSearchResult = dataTable.filter(
         (x) => x?.isUrgent === text?.e?.target?.checked
       );
-      console.log("+_+_+_+_+__+", finalSearchResult);
       setNewFilterData(finalSearchResult);
     }
     if (text?.key === "Pending") {

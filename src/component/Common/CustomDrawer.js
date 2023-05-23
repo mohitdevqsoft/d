@@ -19,15 +19,14 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
   const [startDate, setStartDate] = useState();
   const [filterValue, setFiterValue] = React.useState({});
   React.useEffect(() => {
-    let object = {};
     if (startDate) {
-      var d = new Date(startDate);
-      let timeformat =
-        d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
-      let timestamp = new Date(timeformat).getTime();
-      object = { SelectDate: timestamp };
+      let splitDate = startDate.split("-");
+      console.log("splitDate", splitDate);
+      var mm = parseInt(splitDate[1]);
+      filterData({
+        SelectDate: `${splitDate[2]}/${mm}/${splitDate[0]}`,
+      });
     }
-    filterData(object);
   }, [startDate]);
 
   const dateInputRef = useRef(null);
@@ -156,7 +155,20 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
               style={styles.textInput}
               onChange={(date) => setStartDate(date.target.value)}
             />
-
+            {startDate && (
+              <Button
+                style={{ height: 30, marginTop: 10 }}
+                variant="outlined"
+                type="submit"
+                size="medium"
+                onClick={() => {
+                  filterData({ key: "allData" });
+                  setStartDate();
+                }}
+              >
+                Clear
+              </Button>
+            )}
             {/* <div style={{ justifyContent: 'space-around', display: 'flex' }}>
                             <p>From</p>
                             <img src={StartDate} alt="harry potter" style={{ height: 30, width: 30 }} onClick={() => dateInputRef.current.showPicker()} />
