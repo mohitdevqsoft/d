@@ -65,8 +65,7 @@ export default function CustomTable({
                       sx={{
                         "&:last-child td, &:last-child th": { border: 0 },
                       }}
-                      className="hover_table "
-                      // style={{ backgroundColor: "red" }}
+                      className={row.isUrgent ? "isUrjentColor" : ""}
                     >
                       <TableCell align="center"> {row.name || ""}</TableCell>
                       <TableCell align="center">{row.study || ""}</TableCell>

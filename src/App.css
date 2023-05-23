@@ -117,3 +117,7 @@ position: relative;
     /* color: red; */
     opacity: 0.5;
 }
+.isUrjentColor{
+  background: rgb(228,234,98);
+  background: linear-gradient(0deg, rgba(227, 234, 98, 0.666) 0%, rgba(210, 198, 20, 0.575) 100%);
+}
