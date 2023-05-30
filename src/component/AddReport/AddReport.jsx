@@ -11,6 +11,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import ClearIcon from "@mui/icons-material/Clear";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 // common
 import ContextHelper from "../../ContextHooks/ContextHelper";
@@ -30,11 +31,13 @@ import {
 // images and icon
 import pdfImg from "../../Assets/list.png";
 import docxImg from "../../Assets/docx.png";
+import Loader from "../Common/Loader";
 
 //---------- main component
 function AddReport() {
   //---------- state, veriable, context and hooks
   const { currentUser } = ContextHelper();
+  const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [isVisibleModal, setVisibleModal] = React.useState(false);
   const [dataModal, setDataModal] = React.useState({});
@@ -48,6 +51,7 @@ function AddReport() {
   const [dataTable, setDataTable] = React.useState([]);
   const [newFilterData, setNewFilterData] = React.useState();
   const [updateData, setUpdateData] = React.useState({});
+  const navigate = useNavigate();
 
   //---------- life cycles
   React.useEffect(() => {
@@ -58,6 +62,7 @@ function AddReport() {
 
   //  Get Table Data
   const getTableDataInServer = () => {
+    setLoading(true);
     getDataFromServer({
       end_point: "api/data",
       call_back: handleResponse,
@@ -70,6 +75,7 @@ function AddReport() {
     if (res?.status === "success" && res?.response) {
       setDataTable(res?.response?.reverse());
     } else {
+      setLoading(false);
       // alert(res?.error)
     }
   };
@@ -276,6 +282,8 @@ function AddReport() {
     };
 
     //----------------------return------------------
+
+    // return <Loader />;
     return (
       <div className="modal_view">
         <strong style={{ textAlign: "left", marginBottom: 5 }}>Details</strong>
@@ -558,16 +566,19 @@ function AddReport() {
         handleDrawerOpen={handleDrawerOpen}
         filterData={(text) => filterData(text)}
       />
-
       {/* ------------------- SideBar View  */}
-      <CustomDrawer
-        open={open}
-        handleDrawerClose={handleDrawerClose}
-        filterData={(text) => filterData(text)}
-      />
-
+      {open && (
+        <CustomDrawer
+          open={open}
+          handleDrawerClose={handleDrawerClose}
+          filterData={(text) => filterData(text)}
+        />
+      )}
       {/* ------------------- Table View  */}
       <CustomTable
+        navigate={navigate}
+        setLoading={setLoading}
+        loading={loading}
         isAdmin={currentUser?.isAdmin}
         dataTable={!newFilterData ? dataTable : newFilterData}
         columns={columns}
@@ -576,9 +587,7 @@ function AddReport() {
           setDataModal(data);
         }}
       />
-
       {/* -------------------AddMore Modal  View  */}
-
       {isVisibleModal && (
         <CustomModal
           isVisible={isVisibleModal}
@@ -592,9 +601,7 @@ function AddReport() {
           }}
         />
       )}
-
       {/* ------------------- Download Modal Confirm   */}
-
       {isVisibleDownload && (
         <CustomModal
           isVisible={isVisibleDownload}

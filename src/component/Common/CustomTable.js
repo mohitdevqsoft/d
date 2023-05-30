@@ -14,9 +14,13 @@ import { Button } from "react-bootstrap";
 
 // helper
 import { convertDate } from "../../Utils/Helpers";
+import Loader from "./Loader";
 
 //---------- main component
 export default function CustomTable({
+  navigate,
+  loading,
+  setLoading,
   dataTable,
   columns,
   isAdmin = false,
@@ -35,8 +39,10 @@ export default function CustomTable({
     });
 
     setFilterData(filterDatas);
+    setLoading(false);
   }, [dataTable]);
   //---------- main return
+
   return (
     <Paper sx={{ width: "80%", overflow: "hidden", marginTop: 8.5 }}>
       <TableContainer>
@@ -70,6 +76,20 @@ export default function CustomTable({
                       <TableCell align="center"> {row.name || ""}</TableCell>
                       <TableCell align="center">{row.study || ""}</TableCell>
                       <TableCell align="center">{row?.Date}</TableCell>
+
+                      {isAdmin && (
+                        <TableCell align="center">
+                          <Button
+                            variant="outline-success"
+                            size="sm"
+                            onClick={() => {
+                              navigate("/image-viewer");
+                            }}
+                          >
+                            {"View More Detail"}
+                          </Button>
+                        </TableCell>
+                      )}
                       <TableCell align="center">
                         <Button
                           variant="outline-success"
@@ -102,6 +122,21 @@ export default function CustomTable({
                       <TableCell align="center"> {row.name || ""}</TableCell>
                       <TableCell align="center">{row.study || ""}</TableCell>
                       <TableCell align="center">{row.Date || ""}</TableCell>
+
+                      {isAdmin && (
+                        <TableCell align="center">
+                          <Button
+                            variant="outline-success"
+                            size="sm"
+                            onClick={() => {
+                              call_back(row);
+                            }}
+                          >
+                            {"View More Detail"}
+                          </Button>
+                        </TableCell>
+                      )}
+
                       <TableCell align="center">
                         <Button
                           variant="outline-success"
@@ -122,7 +157,19 @@ export default function CustomTable({
         </Table>
       </TableContainer>
 
-      {!filterData.length && <h2 className="noData">Oops! No Results Found</h2>}
+      {loading && filterData.length <= 0 ? (
+        <TableContainer>
+          <Table>
+            <TableBody>
+              <Loader />
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        filterData.length <= 0 && (
+          <h2 className="noData">Oops! No Results Found</h2>
+        )
+      )}
     </Paper>
   );
 }

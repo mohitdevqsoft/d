@@ -1,71 +1,77 @@
-//---------- imports 
+//---------- imports
 
 // react
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // private route
-import RouteProtecter from './RouteProtecter';
+import RouteProtecter from "./RouteProtecter";
 
 // component
-import Goodbye from '../component/goodbye';
-import Success from '../component/success';
+import Goodbye from "../component/goodbye";
+import Success from "../component/success";
 
-import ViewReport from "../component/ViewReport/ViewReport"
-import Login from '../component/Login/login';
-import ContextHelper from '../ContextHooks/ContextHelper';
-import CustomTable from '../component/Common/CustomTable';
-import AddReport from '../component/AddReport/AddReport';
+import ViewReport from "../component/ViewReport/ViewReport";
+import Login from "../component/Login/login";
+import ContextHelper from "../ContextHooks/ContextHelper";
+import CustomTable from "../component/Common/CustomTable";
+import AddReport from "../component/AddReport/AddReport";
+import ImageViewer from "../component/Common/ImageViewer";
 
 //---------- main route
 
 const Router = () => {
-    const {
-        currentUser,
+  const {
+    currentUser,
 
-        setCurrentUser
-    } = ContextHelper()
+    setCurrentUser,
+  } = ContextHelper();
 
+  // console.log("currentUser", currentUser);
 
+  //---------- View
 
-    // console.log("currentUser", currentUser);
+  return (
+    <BrowserRouter>
+      <Routes>
+        {
+          //---------- private route
+        }
+        <Route
+          path="/view-report"
+          element={
+            <RouteProtecter currentRoute={"/view-report"}>
+              <ViewReport />
+            </RouteProtecter>
+          }
+        />
 
-    //---------- View
+        <Route
+          path="/add-report"
+          element={
+            <RouteProtecter currentRoute={"/add-report"}>
+              <AddReport />
+            </RouteProtecter>
+          }
+        />
 
-    return (
-        <BrowserRouter>
-            <Routes>
+        <Route
+          path="/image-viewer"
+          element={
+            <RouteProtecter currentRoute={"/image-viewer"}>
+              <ImageViewer />
+            </RouteProtecter>
+          }
+        />
 
-                {
-                    //---------- private route
-                }
-                <Route
-                    path="/view-report"
-                    element={
-                        <RouteProtecter currentRoute={'/view-report'}>
-                            <ViewReport />
-                        </RouteProtecter>
-                    }
-                />
-
-                <Route
-                    path="/add-report"
-                    element={
-                        <RouteProtecter currentRoute={'/add-report'}>
-                            <AddReport />
-                        </RouteProtecter>
-                    }
-                />
-
-                {
-                    //---------- public route
-                }
-                <Route path="/" element={<Login />} />
-                <Route path="/login" element={<Login />} />
-
-            </Routes>
-        </BrowserRouter>
-    )
-}
+        {
+          //---------- public route
+        }
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 export default Router;

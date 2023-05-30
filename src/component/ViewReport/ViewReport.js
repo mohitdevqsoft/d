@@ -28,6 +28,7 @@ import {
 // images and icon
 import pdfImg from "../../Assets/list.png";
 import docxImg from "../../Assets/docx.png";
+import Loader from "../Common/Loader";
 
 //---------- main component
 const ViewReport = () => {
@@ -43,6 +44,7 @@ const ViewReport = () => {
   const [open, setOpen] = React.useState(false);
   const [newFilterData, setNewFilterData] = React.useState();
   const [downloadUri, setDownloadUri] = React.useState({});
+  const [loading, setLoading] = React.useState(false);
   const [isVisibleDownload, setIsVisibleDownload] = React.useState(false);
   const [uploadSucess, setUploadSucess] = React.useState({
     historyDelete: true,
@@ -58,6 +60,7 @@ const ViewReport = () => {
   //  Get Table Data
 
   const getTableDataInServer = () => {
+    setLoading(true);
     getDataFromServer({
       end_point: "api/data",
       call_back: handleResponse,
@@ -70,6 +73,7 @@ const ViewReport = () => {
     if (res?.status === "success" && res?.response) {
       setDataTable(res?.response?.reverse());
     } else {
+      setLoading(false);
       // alert(res?.error)
     }
   };
@@ -634,6 +638,8 @@ const ViewReport = () => {
       {/* ------------------- Table View  */}
 
       <CustomTable
+        setLoading={setLoading}
+        loading={loading}
         dataTable={!newFilterData ? dataTable : newFilterData}
         columns={columns}
         isAdmin={true}
@@ -688,6 +694,11 @@ const columns = [
   {
     id: "date",
     label: "Date",
+  },
+
+  {
+    id: "detail",
+    label: "View Detail View",
   },
   {
     id: "addMore",
