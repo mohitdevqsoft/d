@@ -59,6 +59,15 @@ export default function CustomTable({
                   {column.label || ""}
                 </TableCell>
               ))}
+              {isAdmin && (
+                <TableCell
+                  align={"center"}
+                  style={{ fontWeight: "700", fontSize: 16, maxWidth: 100 }}
+                  className="color_header"
+                >
+                  {"View Report"}
+                </TableCell>
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -75,8 +84,18 @@ export default function CustomTable({
                     >
                       <TableCell align="center"> {row.name || ""}</TableCell>
                       <TableCell align="center">{row.study || ""}</TableCell>
-                      <TableCell align="center">{row?.Date}</TableCell>
-
+                      <TableCell align="center">{row?.Date || ""}</TableCell>
+                      <TableCell align="center">
+                        <Button
+                          variant="outline-success"
+                          size="sm"
+                          onClick={() => {
+                            call_back(row);
+                          }}
+                        >
+                          {isAdmin ? "Add More" : "View More"}
+                        </Button>
+                      </TableCell>
                       {isAdmin && (
                         <TableCell align="center">
                           <Button
@@ -90,17 +109,6 @@ export default function CustomTable({
                           </Button>
                         </TableCell>
                       )}
-                      <TableCell align="center">
-                        <Button
-                          variant="outline-success"
-                          size="sm"
-                          onClick={() => {
-                            call_back(row);
-                          }}
-                        >
-                          {isAdmin ? "Add More" : "View More"}
-                        </Button>
-                      </TableCell>
                     </TableRow>
                   )}
                 </>
@@ -123,6 +131,17 @@ export default function CustomTable({
                       <TableCell align="center">{row.study || ""}</TableCell>
                       <TableCell align="center">{row.Date || ""}</TableCell>
 
+                      <TableCell align="center">
+                        <Button
+                          variant="outline-success"
+                          size="sm"
+                          onClick={() => {
+                            call_back(row);
+                          }}
+                        >
+                          {isAdmin ? "Add More" : "View More"}
+                        </Button>
+                      </TableCell>
                       {isAdmin && (
                         <TableCell align="center">
                           <Button
@@ -136,18 +155,6 @@ export default function CustomTable({
                           </Button>
                         </TableCell>
                       )}
-
-                      <TableCell align="center">
-                        <Button
-                          variant="outline-success"
-                          size="sm"
-                          onClick={() => {
-                            call_back(row);
-                          }}
-                        >
-                          {isAdmin ? "Add More" : "View More"}
-                        </Button>
-                      </TableCell>
                     </TableRow>
                   ) : null}
                 </>

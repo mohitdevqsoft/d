@@ -24,6 +24,7 @@ import {
   postDatatoServer,
   UploadImageToServer,
 } from "../../Utils/Axios";
+import { useNavigate } from "react-router-dom";
 
 // images and icon
 import pdfImg from "../../Assets/list.png";
@@ -50,6 +51,7 @@ const ViewReport = () => {
     historyDelete: true,
     ReportDelete: true,
   });
+  const navigate = useNavigate();
 
   //---------- life cycles
   React.useEffect(() => {
@@ -638,6 +640,7 @@ const ViewReport = () => {
       {/* ------------------- Table View  */}
 
       <CustomTable
+        navigate={navigate}
         setLoading={setLoading}
         loading={loading}
         dataTable={!newFilterData ? dataTable : newFilterData}
