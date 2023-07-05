@@ -16,13 +16,16 @@ export const getDataFromServer = async ({
       headers: { Authorization: `Bearer ${params?.token}` },
     })
     .then((response) => {
+     
       let object = {
         response: response?.data,
         status: "success",
         error: undefined,
         props,
+       
       };
       call_back(object);
+      console.log(response.data);
     })
     .catch((error) => {
       let object = {
@@ -48,7 +51,9 @@ export const postDatatoServer = ({ end_point, body, call_back, props }) => {
   axios
     .post(url, body, header)
     .then((response) => {
+      
       console.log("response====>", response);
+     
       let object = {
         response: response?.data,
         status: "success",
@@ -56,6 +61,7 @@ export const postDatatoServer = ({ end_point, body, call_back, props }) => {
         props,
       };
       call_back(object);
+      
     })
     .catch((error) => {
       console.log("error====>", error);

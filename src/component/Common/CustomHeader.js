@@ -125,6 +125,20 @@ function CustomHeader({ open, handleDrawerOpen, filterData }) {
               </IconButton>
             </Typography>
 
+  {/* ------------------------------------------------------------------------------------------- */}
+
+            <Button
+              style={{ marginRight: 50 }}
+              variant="contained"
+              onClick={() => {
+            alert("Hello!!")
+              
+                alert("hello!!")
+              }}
+            >
+              CaseCount
+            </Button>
+
             <Search style={{ marginRight: 10 }}>
               <SearchIconWrapper>
                 <SearchIcon />

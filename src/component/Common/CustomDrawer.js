@@ -145,6 +145,10 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
               Clear
             </Button>
           )}
+
+
+
+          {/* --------------------------------------------------------------------------------------- */}
           <Divider />
           <List style={styles.listContaint}>
             <TextField
@@ -155,6 +159,19 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
               style={styles.textInput}
               onChange={(date) => setStartDate(date.target.value)}
             />
+
+            To
+            
+            <TextField
+              id="standard-basic"
+              variant="filled"
+              type="date"
+              ref={dateInputRef}
+              style={styles.textInput}
+              onChange={(date) => setStartDate(date.target.value)}
+            />
+
+
             {startDate && (
               <Button
                 style={{ height: 30, marginTop: 10 }}
@@ -169,6 +186,9 @@ function CustomDrawer({ open, handleDrawerClose, filterData }) {
                 Clear
               </Button>
             )}
+
+          {/* --------------------------------------------------------------------------------------- */}
+
             {/* <div style={{ justifyContent: 'space-around', display: 'flex' }}>
                             <p>From</p>
                             <img src={StartDate} alt="harry potter" style={{ height: 30, width: 30 }} onClick={() => dateInputRef.current.showPicker()} />

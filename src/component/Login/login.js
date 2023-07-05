@@ -25,7 +25,7 @@ function Login() {
         navigate("/view-report");
       }
     }
-  }, [currentUser]);
+  },[currentUser]);
 
   //--------- user Login
 

@@ -44,7 +44,7 @@ export default function CustomTable({
   //---------- main return
 
   return (
-    <Paper sx={{ width: "80%", overflow: "hidden", marginTop: 8.5 }}>
+    <Paper sx={{ width: "80%", overflow: "hidden", marginTop: 15.5 }}>
       <TableContainer>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -53,7 +53,7 @@ export default function CustomTable({
                 <TableCell
                   key={column.id}
                   align={"center"}
-                  style={{ fontWeight: "700", fontSize: 16, maxWidth: 100 }}
+                  style={{ fontWeight: "700", fontSize: 16,  }}
                   className="color_header"
                 >
                   {column.label || ""}
@@ -62,7 +62,7 @@ export default function CustomTable({
               {isAdmin && (
                 <TableCell
                   align={"center"}
-                  style={{ fontWeight: "700", fontSize: 16, maxWidth: 100 }}
+                  style={{ fontWeight: "700", fontSize: 16,maxWidth: 40 }}
                   className="color_header"
                 >
                   {"View Report"}
@@ -78,14 +78,15 @@ export default function CustomTable({
                     <TableRow
                       key={row?.id}
                       sx={{
-                        "&:last-child td, &:last-child th": { border: 0 },
+                        "&:last-child td, &:last-child th": { border: 0 ,padding:0, margin:0 },
                       }}
                       className={row.isUrgent ? "isUrjentColor" : ""}
                     >
-                      <TableCell align="center"> {row.name || ""}</TableCell>
-                      <TableCell align="center">{row.study || ""}</TableCell>
-                      <TableCell align="center">{row?.Date || ""}</TableCell>
-                      <TableCell align="center">
+                      <TableCell align="center" style={{padding:"5px"}}> {row.name || ""}</TableCell>
+                    
+                      <TableCell align="center"style={{padding:"5px"}}>{row.study || ""}</TableCell>
+                      <TableCell align="center"style={{padding:"5px"}}>{row?.Date || ""}</TableCell>
+                      <TableCell align="center"style={{padding:"5px"}}>
                         <Button
                           variant="outline-success"
                           size="sm"
@@ -109,6 +110,7 @@ export default function CustomTable({
                           </Button>
                         </TableCell>
                       )}
+                        <TableCell align="center"style={{padding:"5px"}}>  </TableCell>
                     </TableRow>
                   )}
                 </>
@@ -122,16 +124,16 @@ export default function CustomTable({
                     <TableRow
                       key={row?.id}
                       sx={{
-                        "&:last-child td, &:last-child th": { border: 0 },
+                        "&:last-child td, &:last-child th": {border: 0 , margin:0 },
                       }}
                       className="hover_table hover_tables"
                       // style={{ backgroundColor: "red" }}
                     >
-                      <TableCell align="center"> {row.name || ""}</TableCell>
-                      <TableCell align="center">{row.study || ""}</TableCell>
-                      <TableCell align="center">{row.Date || ""}</TableCell>
+                      <TableCell align="center"style={{padding:"0px"}}> {row.name || ""}</TableCell>
+                      <TableCell align="center"style={{padding:"0px"}}>{row.study || ""}</TableCell>
+                      <TableCell align="center"style={{padding:"0px"}}>{row.Date || ""}</TableCell>
 
-                      <TableCell align="center">
+                      <TableCell align="center" style={{padding:"0px"}}>
                         <Button
                           variant="outline-success"
                           size="sm"
@@ -155,6 +157,8 @@ export default function CustomTable({
                           </Button>
                         </TableCell>
                       )}
+                        <TableCell align="center"style={{padding:"5px"}}>  </TableCell>
+
                     </TableRow>
                   ) : null}
                 </>
@@ -174,7 +178,7 @@ export default function CustomTable({
         </TableContainer>
       ) : (
         filterData.length <= 0 && (
-          <h2 className="noData">Oops! No Results Found</h2>
+          <h2 className="noData" style={{ fontSize: 16, padding: 8 }}>Oops! No Results Found</h2>
         )
       )}
     </Paper>

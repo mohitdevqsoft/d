@@ -634,4 +634,8 @@ const columns = [
     id: "addMore",
     label: "Other Information",
   },
+  {
+    id: "imageOrSeries",
+    label: "Images Or Series",
+  },
 ];
